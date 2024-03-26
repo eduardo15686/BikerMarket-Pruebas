@@ -6,6 +6,8 @@ import {
   Image,
   Button,
   ActivityIndicator,
+  TextInput,
+  ScrollView,
 } from "react-native";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -19,6 +21,9 @@ import FIREBASE_APP from "../../credentials";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { async } from "@firebase/util";
+import { Picker } from "@react-native-picker/picker";
+
+import RNPickerSelect from "react-native-picker-select";
 
 const auth = getAuth();
 const storage = getStorage(FIREBASE_APP);
@@ -27,6 +32,7 @@ export default function EventRegister({ route }) {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState();
 
   // Listen to onAuthStateChanged
   const usuario = route.params.user;
@@ -100,15 +106,222 @@ export default function EventRegister({ route }) {
     );
   } else {
     return (
-      <View>
-        <Image
-          style={{ width: 200, height: 200, borderRadius: 100 }}
-          source={{
-            uri: userData.foto_url,
-          }}
-        />
-        <Text>hello {userData.nombre}</Text>
-      </View>
+      <ScrollView>
+        <View>
+          <View style={styles.tarjeta}>
+            <View style={{ alignContent: "center", alignItems: "center" }}>
+              <Image
+                style={{ width: 150, height: 150, borderRadius: 100 }}
+                source={{
+                  uri: userData.foto_url,
+                }}
+              />
+              <Text style={{ fontWeight: "bold", marginTop: 15 }}>Editar</Text>
+            </View>
+            {/* inputs */}
+            <View style={{ marginTop: 15 }}>
+              <Text
+                style={{ textAlign: "center", color: "#F15A24", fontSize: 20 }}
+              >
+                INFORMACIÓN PERSONAL
+              </Text>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  marginTop: 25,
+                }}
+              >
+                <Text style={styles.text}>Nombre Completo</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Nombre Apellido"
+                  placeholderTextColor="gray"
+                  autoCapitalize={"characters"}
+                  value={userData.nombre}
+                ></TextInput>
+              </View>
+            </View>
+            <View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>Apodo</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Apodo"
+                  placeholderTextColor="gray"
+                  autoCapitalize={"characters"}
+                  value={userData.apodo}
+                ></TextInput>
+              </View>
+            </View>
+            <View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>Número de celular</Text>
+                <TextInput
+                  style={styles.input}
+                  maxLength={10}
+                  placeholder="Celular"
+                  keyboardType="numeric"
+                  placeholderTextColor="gray"
+                  autoCapitalize={"characters"}
+                  value={userData.apodo}
+                ></TextInput>
+              </View>
+            </View>
+            <View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>Fecha de nacimiento</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="dd/mm/aaaa"
+                  placeholderTextColor="gray"
+                  autoCapitalize={"characters"}
+                  value={userData.apodo}
+                ></TextInput>
+              </View>
+            </View>
+            <View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>Estado</Text>
+                <RNPickerSelect
+                  style={{ width: 100, flex: 1 }}
+                  onValueChange={(value) => console.log(value)}
+                  items={[
+                    { label: "Football", value: "football" },
+                    { label: "Baseball", value: "baseball" },
+                    { label: "Hockey", value: "hockey" },
+                  ]}
+                />
+              </View>
+            </View>
+            <View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>Municipio</Text>
+                <RNPickerSelect
+                  style={{ width: 100, flex: 1 }}
+                  onValueChange={(value) => console.log(value)}
+                  items={[
+                    { label: "Football", value: "football" },
+                    { label: "Baseball", value: "baseball" },
+                    { label: "Hockey", value: "hockey" },
+                  ]}
+                />
+              </View>
+            </View>
+            {/* datos medicos */}
+            <View style={{ marginTop: 15 }}>
+              <Text
+                style={{ textAlign: "center", color: "#F15A24", fontSize: 20 }}
+              >
+                DATOS MEDICOS
+              </Text>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>Tipo de Sangre</Text>
+                <RNPickerSelect
+                  style={{ width: 100, flex: 1 }}
+                  onValueChange={(value) => console.log(value)}
+                  items={[
+                    { label: "Football", value: "football" },
+                    { label: "Baseball", value: "baseball" },
+                    { label: "Hockey", value: "hockey" },
+                  ]}
+                />
+              </View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>Seguro Medico</Text>
+                <RNPickerSelect
+                  style={{ width: 100, flex: 1 }}
+                  onValueChange={(value) => console.log(value)}
+                  items={[
+                    { label: "Football", value: "football" },
+                    { label: "Baseball", value: "baseball" },
+                    { label: "Hockey", value: "hockey" },
+                  ]}
+                />
+              </View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>Institución Médica</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Institución Médica"
+                  placeholderTextColor="gray"
+                  autoCapitalize={"characters"}
+                  value={userData.apodo}
+                ></TextInput>
+              </View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                <Text style={styles.text}>No. Poliza/ No. Afiliación</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="No. Poliza/ No. Afiliación"
+                  placeholderTextColor="gray"
+                  autoCapitalize={"characters"}
+                  value={userData.apodo}
+                ></TextInput>
+              </View>
+            </View>
+            {/* boton para subir información */}
+            <View style={{ marginTop: 30 }}>
+              <Button title="Subir Información" color={"#F15A24"}></Button>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
       // <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       //   {/* <Text>Bienvenido {userData.nombre}</Text> */}
       //   {image && (
@@ -125,13 +338,36 @@ export default function EventRegister({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
   horizontal: {
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  tarjeta: {
+    elevation: 10,
+    backgroundColor: "white",
+    shadowColor: "#f15a24",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    borderRadius: 15,
+    margin: 10,
+    marginTop: -35,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    marginTop: 15,
+  },
+  text: {
+    fontSize: 14,
+    color: "#f15a24",
+  },
+  input: {
+    borderBottomColor: "#f15a24",
+    borderBottomWidth: 1,
+    paddingVertical: 0,
+    marginTop: 5,
   },
 });
