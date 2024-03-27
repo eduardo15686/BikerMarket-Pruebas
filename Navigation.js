@@ -16,7 +16,8 @@ import Login from "./screens/principal/Login";
 import Register from "./screens/principal/Register";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import firebaseAuth from "../navigation/credentials";
+import firebaseAuth from "../BikerMarket-Pruebas/credentials";
+
 import {
   getAuth,
   signInWithEmailAndPassword,
