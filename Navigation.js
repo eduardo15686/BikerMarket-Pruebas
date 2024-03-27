@@ -26,6 +26,7 @@ import {
 import { useState, useEffect } from "react";
 import AñadirEvento from "./screens/tabScreens/rallyStack/AñadirEvento";
 import EventRegister from "./screens/draweGroup/EventRegister";
+import RallyAdmin from "./screens/tabScreens/RallyAdmin";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -49,33 +50,18 @@ function PaginaPrincipal() {
           headerShown: false,
         }}
       ></Stack.Screen>
-      <Stack.Screen
-        name="AfterLogin"
-        component={StackGroup}
-        options={{
-          headerShown: false,
-          //headerBackVisible: false,
-        }}
-      />
     </Stack.Navigator>
   );
 }
 
-function StackGroup() {
+//Admin
+function AdminGroup() {
   return (
     <Stack.Navigator
       screenOptions={{ headerStyle: { backgroundColor: "#FAC3AE" } }}
     >
-      <Stack.Screen name="Rally" component={Rally} />
-      <Stack.Screen
-        name="Detalles"
-        component={Detalles}
-        options={
-          {
-            // presentation: "modal",
-          }
-        }
-      />
+      <Stack.Screen name="Eventos Admin" component={RallyAdmin} />
+      <Stack.Screen name="Detalles" component={Detalles} />
       <Stack.Screen
         name="Añadir Evento"
         component={AñadirEvento}
@@ -92,35 +78,92 @@ function StackGroup() {
   );
 }
 
-function TabGroup() {
+//Usuario
+function StackGroup() {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, focused, size }) => {
-          let iconName;
-          if (route.name === "Eventos") {
-            iconName = "motorcycle";
-          } else if (route.name === "Market") {
-            iconName = "shopping-cart";
-          } else if (route.name === "Bandeja") {
-            iconName = "folder-open";
-          } else if (route.name === "Configuración") {
-            iconName = "gear";
-          }
-          return <FontAwesome name={iconName} color={color} size={size} />;
-        },
-      })}
+    <Stack.Navigator
+      screenOptions={{ headerStyle: { backgroundColor: "#FAC3AE" } }}
     >
-      <Tab.Screen
-        name="Eventos"
-        component={StackGroup}
-        options={{ headerShown: false }}
+      <Stack.Screen name="Eventos Activos" component={Rally} />
+      <Stack.Screen name="Detalles" component={Detalles} />
+      <Stack.Screen
+        name="Añadir Evento"
+        component={AñadirEvento}
+        options={{}}
       />
-      <Tab.Screen name="Market" component={Market} />
-      <Tab.Screen name="Bandeja" component={Bandeja} />
-      <Tab.Screen name="Configuración" component={Configuracion} />
-    </Tab.Navigator>
+      <Stack.Screen
+        name="Registro para Eventos"
+        component={EventRegister}
+        options={{
+          presentation: "modal",
+        }}
+      />
+    </Stack.Navigator>
   );
+}
+//admin
+const rol = "admin";
+//usuarios
+function TabGroup() {
+  if (rol == "admin") {
+    return (
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, focused, size }) => {
+            let iconName;
+            if (route.name === "Eventos") {
+              iconName = "motorcycle";
+            } else if (route.name === "Market") {
+              iconName = "shopping-cart";
+            } else if (route.name === "Bandeja") {
+              iconName = "folder-open";
+            } else if (route.name === "Configuración") {
+              iconName = "gear";
+            }
+            return <FontAwesome name={iconName} color={color} size={size} />;
+          },
+        })}
+      >
+        <Tab.Screen name="Market" component={Market} />
+        <Tab.Screen
+          name="Eventos"
+          component={AdminGroup}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen name="Bandeja" component={Bandeja} />
+        <Tab.Screen name="Configuración" component={Configuracion} />
+      </Tab.Navigator>
+    );
+  } else {
+    return (
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, focused, size }) => {
+            let iconName;
+            if (route.name === "Eventos") {
+              iconName = "motorcycle";
+            } else if (route.name === "Market") {
+              iconName = "shopping-cart";
+            } else if (route.name === "Bandeja") {
+              iconName = "folder-open";
+            } else if (route.name === "Configuración") {
+              iconName = "gear";
+            }
+            return <FontAwesome name={iconName} color={color} size={size} />;
+          },
+        })}
+      >
+        <Tab.Screen name="Market" component={Market} />
+        <Tab.Screen
+          name="Eventos"
+          component={StackGroup}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen name="Bandeja" component={Bandeja} />
+        <Tab.Screen name="Configuración" component={Configuracion} />
+      </Tab.Navigator>
+    );
+  }
 }
 
 export default function Navigation() {
@@ -142,6 +185,7 @@ export default function Navigation() {
     }
   }, []);
 
+  const tipoUsuario = "admin";
   if (isLogged == null) {
     return (
       <NavigationContainer
@@ -151,7 +195,6 @@ export default function Navigation() {
           theme={currentTheme == "dark" ? DarkTheme : DefaultTheme}
         ></StatusBar>
         <PaginaPrincipal />
-        {/* <TabGroup /> */}
       </NavigationContainer>
     );
   } else {
@@ -163,7 +206,6 @@ export default function Navigation() {
           theme={currentTheme == "dark" ? DarkTheme : DefaultTheme}
         ></StatusBar>
         <TabGroup />
-        {/* <TabGroup /> */}
       </NavigationContainer>
     );
   }

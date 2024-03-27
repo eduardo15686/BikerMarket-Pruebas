@@ -15,12 +15,12 @@ import { useNavigation } from "@react-navigation/native";
 import Funcionalidades from "../../components/Funcionalidades";
 import { FontAwesome5 } from "@expo/vector-icons";
 
+
 export default function Login() {
   const { navigate } = useNavigation();
   const [showPwd, setShowPwd] = useState(true);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

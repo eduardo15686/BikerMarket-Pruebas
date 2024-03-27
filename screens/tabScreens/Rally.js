@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
     justifyContent: "center",
     textAlign: "justify",
+    marginTop: 15,
   },
   image: {
     width: 110,
