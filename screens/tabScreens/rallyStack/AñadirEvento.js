@@ -1,12 +1,15 @@
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, Platform, Image, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, Platform, Image, ScrollView, Alert } from "react-native";
 import { React, useState } from "react";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Checkbox from 'expo-checkbox';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system'
 
+import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
 
-export default function AñadirEvento() {
+export default async function AñadirEvento() {
 
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
@@ -14,6 +17,8 @@ export default function AñadirEvento() {
   const [endDate, setEndDate] = useState(new Date(Date.now())); //useState para tomar fecha y mostrarla: datePicker fin
 
   const [fotoEvento, setFotoEvento] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
   const [nameEvent, setNameEvent] = useState("");
   const [descEvent, setDescEvent] = useState("");
   const [vali, setVali] = useState("");
@@ -35,10 +40,41 @@ export default function AñadirEvento() {
     }
   };
 
-  
+  //subir imagen
+
+  const uploadMedia = async () => {
+    setUploading(true);
+  }
+  try {
+    const { uri } = await FileSystem.getInfoAsync(fotoEvento);
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => {
+        resolve(xhr.response);
+      };
+      xhr.onerror = (e) => {
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
+    const filename = fotoEvento.substring(fo.lastIndexOf('/') + 1);
+    const ref = FIREBASE_APP.storage().ref().child(filename);
+
+    await ref.put(blob);
+    setUploading(false);
+    Alert.alert('Imagen guardada');
+    setFotoEvento(null);
+  } catch (error) {
+    console.log(error);
+    setUploading(false);
+  }
 
 
-  
+
+
+
   const showPicker = () => {
     setIsPickerShow(true);
   };
@@ -75,7 +111,7 @@ export default function AñadirEvento() {
             onPress={pickImage}>
             <Text>Agregar foto</Text>
           </TouchableOpacity>
-          {/*  {fotoEvento && <Image source={{ uri: fotoEvento }} style={{ width: 200, height: 200 }} />} */}
+          {fotoEvento && <Image source={{ uri: fotoEvento }} style={{ width: 100, height: 100 }} />} 
         </View>
 
 
@@ -97,7 +133,7 @@ export default function AñadirEvento() {
 
           {/* Agregar descripcion del evento */}
 
-          <View style={styles.containerEventoInfo}> 
+          <View style={styles.containerEventoInfo}>
             <Text style={styles.textEvento}>
               Descripcion del evento:
             </Text>
@@ -135,7 +171,7 @@ export default function AñadirEvento() {
               value={date}
               mode={'date'}
               display={Platform.OS === 'ios' ? 'spinner' : 'spinner'}
-              negative={{label: 'Cancel', textColor: 'red'}}
+              negative={{ label: 'Cancel', textColor: 'red' }}
               positiveButton="OK!"
               timeZoneName={'America/Mexico_City'}
               onChange={onChangeStart}
@@ -284,9 +320,9 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   inputEventosDesc: {
-    flex: 1, 
-    height: 100, 
-    textAlignVertical: 'top', 
+    flex: 1,
+    height: 100,
+    textAlignVertical: 'top',
     borderRightWidth: 5,
     borderBottomWidth: 5,
     borderRadius: 6,
