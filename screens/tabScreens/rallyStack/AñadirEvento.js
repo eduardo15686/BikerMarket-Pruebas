@@ -1,26 +1,23 @@
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, Platform, Image } from "react-native";
+import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, Platform, Image, ScrollView } from "react-native";
 import { React, useState } from "react";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Checkbox from 'expo-checkbox';
 import * as ImagePicker from 'expo-image-picker';
+
+import Funcionalidades from "../../../components/Funcionalidades";
 
 export default function AñadirEvento() {
 
-  const [fotoEvento, setFotoEvento] = useState(null);
-
-  const [isCheckedEvi, setCheckedEvi] = useState(false); //useState checkBox evidencia
-  const [isNotCheckEvi, setNotCheckEvi] = useState(false); //useState checkBox evidencia
-
-  const [isCheckedCert, setCheckedCert] = useState(false); //useState checkBox certificado
-  const [isNotCheckedCert, setNotCheckedCert] = useState(false); //useState checkBox certificado
-
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
-
   const [date, setDate] = useState(new Date(Date.now())); //useState para tomar fecha y mostrarla: datePicker inicio
   const [endDate, setEndDate] = useState(new Date(Date.now())); //useState para tomar fecha y mostrarla: datePicker fin
 
+  const [fotoEvento, setFotoEvento] = useState(null);
+  const [nameEvent, setNameEvent] = useState("");
+  const [descEvent, setDescEvent] = useState("");
+  const [vali, setVali] = useState("");
+  const [certi, setCerti] = useState("");
 
   const pickImage = async () => {
 
@@ -38,7 +35,10 @@ export default function AñadirEvento() {
     }
   };
 
+  
 
+
+  
   const showPicker = () => {
     setIsPickerShow(true);
   };
@@ -61,176 +61,172 @@ export default function AñadirEvento() {
   };
 
   return (
-    <View style={styles.containerPrincipal}>
+    <ScrollView>
+      <View style={styles.containerPrincipal}>
 
-      <Text style={styles.tituloEvento}>
-        Añadir Evento
-      </Text>
+        <Text style={styles.tituloEvento}>
+          Añadir Evento
+        </Text>
 
-      {/* Agregar foto del evento  */}
-      <View style={styles.containerFoto}>
-      <TouchableOpacity
-          style={styles.buttonFoto}
-          onPress={pickImage}>
-          <Text>Agregar foto</Text>
-        </TouchableOpacity>
-        {/*  {fotoEvento && <Image source={{ uri: fotoEvento }} style={{ width: 200, height: 200 }} />} */}
-      </View>
-
-
-      {/* Registrar evento */}
-      <View>
-
-        {/* Agregar nombre del evento */}
-
-        <View style={styles.containerEventoInfo}>
-          <Text style={styles.textEvento}>
-            Nombre del evento:
-          </Text>
-          <TextInput
-            style={styles.inputEventos}
-            placeholder="nombre del evento..."
-          />
+        {/* Agregar foto del evento  */}
+        <View style={styles.containerFoto}>
+          <TouchableOpacity
+            style={styles.buttonFoto}
+            onPress={pickImage}>
+            <Text>Agregar foto</Text>
+          </TouchableOpacity>
+          {/*  {fotoEvento && <Image source={{ uri: fotoEvento }} style={{ width: 200, height: 200 }} />} */}
         </View>
 
-        {/* Agregar descripcion del evento */}
-        
-        <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-          <Text style={styles.textEvento}>
-            Descripcion del evento:
-          </Text>
-          <TextInput
-            style={styles.inputEventos}
-            placeholder="descripcion del evento..."
-            maxLength={200}
-          />
-        </View>
-      </View>
 
-      {/* Fechas del evento */}
-      <View style={styles.containerFechaEvento}>
-        {/* Fecha de inicio */}
-        <View style={{ fontSize: 20, color: '#FE895C' }}>
-          <Text style={{ fontSize: 15, color: 'grey' }} >
-            <Text style={{ fontWeight: 'bold' }}>Fecha de inicio:
+        {/* Registrar evento */}
+        <View>
+
+          {/* Agregar nombre del evento */}
+
+          <View style={styles.containerEventoInfo}>
+            <Text style={styles.textEvento}>
+              Nombre del evento:
             </Text>
-            {date.toUTCString()}
-          </Text>
-        </View>
-        {!isPickerShow && (
-          <View style={{ padding: 15 }}>
-            <Button
-              title="Seleccionar fecha de inicio"
-              color="#FE895C" onPress={showPicker}
+            <TextInput
+              style={styles.inputEventos}
+              placeholder="nombre del evento..."
+              onChangeText={(text) => setNameEvent(text)}
             />
           </View>
-        )}
-        {isPickerShow && (
-          <DateTimePicker
-            value={date}
-            mode={'date'}
-            display={Platform.OS === 'ios' ? 'spinner' : 'spinner'}
 
-            onChange={onChangeStart}
-          />
-        )}
+          {/* Agregar descripcion del evento */}
 
-        {/* Fecha de finalizacion */}
-        <View style={{ fontSize: 20, color: '#FE895C' }}>
-          <Text style={{ fontSize: 15, color: 'grey' }}>
-            <Text style={{ fontWeight: 'bold' }}>Fecha en que termina:
+          <View style={styles.containerEventoInfo}> 
+            <Text style={styles.textEvento}>
+              Descripcion del evento:
             </Text>
-            {endDate.toUTCString()}
-          </Text>
-        </View>
-        {!isPickerShowEnd && (
-          <View style={{ padding: 15 }}>
-            <Button
-              title="Seleccionar fecha en que termina"
-              color="#FE895C" onPress={showPickerEnd}
+            <TextInput
+              style={styles.inputEventosDesc}
+              placeholder="descripcion del evento..."
+              multiline={true}
+              maxLength={200}
+              onChangeText={(text) => setDescEvent(text)}
             />
           </View>
-        )}
-        {isPickerShowEnd && (
-          <DateTimePicker
-            value={endDate}
-            mode={'date'}
-            display={Platform.OS === 'ios' ? 'spinner' : 'spinner'}
-
-            onChange={onChangeEnd}
-          />
-        )}
-
-      </View>
+        </View>
 
 
-      {/* Validaciones */}
+        {/* Fechas del evento */}
+        <View style={styles.containerFechaEvento}>
+          {/* Fecha de inicio */}
+          <View style={{ fontSize: 20, color: '#FE895C' }}>
+            <Text style={{ fontSize: 15, color: 'grey' }} >
+              <Text style={{ fontWeight: 'bold' }}>Fecha de inicio:
+              </Text>
+              {date.toUTCString()}
+            </Text>
+          </View>
+          {!isPickerShow && (
+            <View style={{ padding: 15 }}>
+              <Button
+                title="Seleccionar fecha de inicio"
+                color="#FE895C" onPress={showPicker}
+              />
+            </View>
+          )}
+          {isPickerShow && (
+            <DateTimePicker
+              value={date}
+              mode={'date'}
+              display={Platform.OS === 'ios' ? 'spinner' : 'spinner'}
+              negative={{label: 'Cancel', textColor: 'red'}}
+              positiveButton="OK!"
+              timeZoneName={'America/Mexico_City'}
+              onChange={onChangeStart}
+            />
+          )}
 
-      <View
-        style={styles.containerValidaciones}>
-        <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
-          ¿Validacion de evidencias?
-        </Text>
+          {/* Fecha de finalizacion */}
+          <View style={{ fontSize: 20, color: '#FE895C' }}>
+            <Text style={{ fontSize: 15, color: 'grey' }}>
+              <Text style={{ fontWeight: 'bold' }}>Fecha en que termina:
+              </Text>
+              {endDate.toUTCString()}
+            </Text>
+          </View>
+          {!isPickerShowEnd && (
+            <View style={{ padding: 15 }}>
+              <Button
+                title="Seleccionar fecha en que termina"
+                color="#FE895C" onPress={showPickerEnd}
+              />
+            </View>
+          )}
+          {isPickerShowEnd && (
+            <DateTimePicker
+              value={endDate}
+              mode={'date'}
+              display={Platform.OS === 'ios' ? 'spinner' : 'spinner'}
+
+              onChange={onChangeEnd}
+            />
+          )}
+
+        </View>
+
+
+        {/* Validaciones */}
+
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}>
-          <Checkbox
-            value={isCheckedEvi}
-            onValueChange={setCheckedEvi}
-            color={isCheckedEvi ? '#FAC3AE' : undefined}
-          />
-          <Text> Si, validar</Text>
+          style={styles.containerValidaciones}>
+          <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
+            ¿Validacion de evidencias? {'\n'}
+            Escribir unicamente si o no
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}>
+            <TextInput
+              onChangeText={(text) => setVali(text)}
+              style={styles.inputEvidencias}
+              maxLength={2} />
+          </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}>
-          <Checkbox
-            value={isNotCheckEvi}
-            onValueChange={setNotCheckEvi}
-            color={isNotCheckEvi ? '#E22222' : undefined}
-          />
-          <Text> No validar evidencias</Text>
-        </View>
-      </View>
-      <View>
-        <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
-          ¿Entrega de certificados?
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}>
-          <Checkbox
-            value={isCheckedCert}
-            onValueChange={setCheckedCert}
-            color={isCheckedCert ? '#FAC3AE' : undefined}
-          />
-          <Text> Sí, entregar certificados</Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Checkbox
-            value={isNotCheckedCert}
-            onValueChange={setNotCheckedCert}
-            color={isNotCheckedCert ? '#E22222' : undefined}
-          />
-          <Text> No, no entregar certificados</Text>
-        </View>
-      </View>
 
-      {/* Boton para enviar evento */}
+        <View
+          style={styles.containerValidaciones}>
+          <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
+            ¿Entrega de certificados? {'\n'}
+            Escribir unicamente si o no
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}>
+            <TextInput
+              onChangeText={(text) => setCerti(text)}
+              style={styles.inputEvidencias}
+              maxLength={2} />
+          </View>
+        </View>
+
+        {/* Boton para enviar evento 
       <TouchableOpacity
         style={styles.buttonEnviar}>
         <Text style={{ color: 'black' }}>Guardar evento</Text>
-      </TouchableOpacity>
-    </View>
+      </TouchableOpacity>*/}
+
+        <Funcionalidades
+          title={"Registrar evento"}
+          eventName={nameEvent}
+          eventDesc={descEvent}
+          dateInit={date.toUTCString()}
+          dateEnd={endDate.toUTCString()}
+          validation={vali.toLowerCase()}
+          certification={certi.toLowerCase()}
+          callFunction={"handleRegisterEvent"}
+        />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -285,6 +281,18 @@ const styles = StyleSheet.create({
     borderRightColor: '#FAC3AE',
     borderBottomColor: '#FAC3AE',
     margin: 10,
+    padding: 5,
+  },
+  inputEventosDesc: {
+    flex: 1, 
+    height: 100, 
+    textAlignVertical: 'top', 
+    borderRightWidth: 5,
+    borderBottomWidth: 5,
+    borderRadius: 6,
+    borderRightColor: '#FAC3AE',
+    borderBottomColor: '#FAC3AE',
+    margin: 10,
     padding: 5
   },
   containerFechaEvento: {
@@ -300,6 +308,16 @@ const styles = StyleSheet.create({
     marginEnd: -1,
     borderTopColor: '#FAC3AE',
     borderTopWidth: 4.5
+  },
+  inputEvidencias: {
+    alignSelf: 'center',
+    borderRightWidth: 5,
+    borderBottomWidth: 5,
+    borderRadius: 6,
+    borderRightColor: '#FAC3AE',
+    borderBottomColor: '#FAC3AE',
+    margin: 10,
+    padding: 5
   },
   buttonEnviar: {
     width: 150,

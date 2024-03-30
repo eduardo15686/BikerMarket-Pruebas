@@ -10,7 +10,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { FIREBASE_DB } from "../credentials";
-import { collection, setDoc, doc } from "firebase/firestore";
+import { collection, setDoc, doc, addDoc } from "firebase/firestore";
 
 export default function funcionalidades(props) {
   const auth = getAuth(firebaseAuth);
@@ -77,6 +77,10 @@ export default function funcionalidades(props) {
             if (props.callFunction == "handleRegister") {
               handleRegister();
             }
+            if (props.callFunction == "handleRegisterEvent") {
+              handleRegisterEvent();
+              
+            }
           }}
           style={{ alignItems: "center", justifyContent: "center" }}
         >
@@ -85,4 +89,37 @@ export default function funcionalidades(props) {
       </LinearGradient>
     </View>
   );
+
+///Registrar evento  
+ 
+ async function handleRegisterEvent() {
+  if (props.eventName === "" || props.eventDesc === "" || props.validation === "" || props.certification === "" ) {
+    Alert.alert("Error", "Por favor, llene todos los cambios");
+    return;
+  }
+  if (props.validation !== "si" || props.validation !== "no" && props.certification !== "si" || props.certification !== "no") {
+    Alert.alert("Error", "Campos de validación y certificación deben ser 'si' o 'no'");
+    return;
+    
+  }
+try {
+  
+  await addDoc(collection(FIREBASE_DB, "events" ), {
+    auth,
+    eventName: props.eventName,
+    eventDesc: props.eventDesc,
+    dateInit: props.dateInit,
+    dateEnd: props.dateEnd,
+    validation: props.validation,
+    certification: props.certification
+  }
+  )
+  Alert.alert("¡Evento registrado!")
+} catch (error) {
+  console.log( error);
 }
+}
+
+}
+
+
