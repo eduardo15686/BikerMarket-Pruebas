@@ -2,14 +2,14 @@ import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, Platform, 
 import { React, useState } from "react";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Checkbox from 'expo-checkbox';
+import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system'
 
 import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
 
-export default async function AñadirEvento() {
+export default function AñadirEvento() {
 
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
@@ -21,8 +21,8 @@ export default async function AñadirEvento() {
 
   const [nameEvent, setNameEvent] = useState("");
   const [descEvent, setDescEvent] = useState("");
-  const [vali, setVali] = useState("");
-  const [certi, setCerti] = useState("");
+  const [vali, setVali] = useState("Unknown");
+  const [certi, setCerti] = useState("Unkwon");
 
   const pickImage = async () => {
 
@@ -44,32 +44,33 @@ export default async function AñadirEvento() {
 
   const uploadMedia = async () => {
     setUploading(true);
-  }
-  try {
-    const { uri } = await FileSystem.getInfoAsync(fotoEvento);
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = () => {
-        resolve(xhr.response);
-      };
-      xhr.onerror = (e) => {
-        reject(new TypeError('Network request failed'));
-      };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      xhr.send(null);
-    });
-    const filename = fotoEvento.substring(fo.lastIndexOf('/') + 1);
-    const ref = FIREBASE_APP.storage().ref().child(filename);
+    try {
+      const { uri } = await FileSystem.getInfoAsync(fotoEvento);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          resolve(xhr.response);
+        };
+        xhr.onerror = (e) => {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', uri, true);
+        xhr.send(null);
+      });
+      const filename = fotoEvento.substring(fo.lastIndexOf('/') + 1);
+      const ref = FIREBASE_APP.storage().ref().child(filename);
 
-    await ref.put(blob);
-    setUploading(false);
-    Alert.alert('Imagen guardada');
-    setFotoEvento(null);
-  } catch (error) {
-    console.log(error);
-    setUploading(false);
+      await ref.put(blob);
+      setUploading(false);
+      Alert.alert('Imagen guardada');
+      setFotoEvento(null);
+    } catch (error) {
+      console.log(error);
+      setUploading(false);
+    }
   }
+
 
 
 
@@ -109,9 +110,16 @@ export default async function AñadirEvento() {
           <TouchableOpacity
             style={styles.buttonFoto}
             onPress={pickImage}>
-            <Text>Agregar foto</Text>
+              {!fotoEvento && <Text>Añadir evento</Text>}
+
+            {fotoEvento && 
+            <><Image source={{ uri: fotoEvento }} style={styles.fotoEvento} />
+           <View style={styles.containerFoto}>
+            </View> 
+            </>
+            }
           </TouchableOpacity>
-          {fotoEvento && <Image source={{ uri: fotoEvento }} style={{ width: 100, height: 100 }} />} 
+
         </View>
 
 
@@ -120,30 +128,40 @@ export default async function AñadirEvento() {
 
           {/* Agregar nombre del evento */}
 
-          <View style={styles.containerEventoInfo}>
-            <Text style={styles.textEvento}>
-              Nombre del evento:
+          <View
+            style={styles.containerEventoInfo}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
+              Nombre del evento
             </Text>
-            <TextInput
-              style={styles.inputEventos}
-              placeholder="nombre del evento..."
-              onChangeText={(text) => setNameEvent(text)}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}>
+              <TextInput
+                onChangeText={(text) => setNameEvent(text)}
+                style={styles.inputEventosDesc} />
+            </View>
           </View>
 
           {/* Agregar descripcion del evento */}
 
-          <View style={styles.containerEventoInfo}>
-            <Text style={styles.textEvento}>
-              Descripcion del evento:
+          <View
+            style={styles.containerEventoInfo}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
+              Descripcion del evento
             </Text>
-            <TextInput
-              style={styles.inputEventosDesc}
-              placeholder="descripcion del evento..."
-              multiline={true}
-              maxLength={200}
-              onChangeText={(text) => setDescEvent(text)}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}>
+              <TextInput
+                onChangeText={(text) => setDescEvent(text)}
+                style={styles.inputEventosDesc}
+                maxLength={200}
+                multiline={true} />
+            </View>
           </View>
         </View>
 
@@ -161,6 +179,7 @@ export default async function AñadirEvento() {
           {!isPickerShow && (
             <View style={{ padding: 15 }}>
               <Button
+
                 title="Seleccionar fecha de inicio"
                 color="#FE895C" onPress={showPicker}
               />
@@ -213,17 +232,23 @@ export default async function AñadirEvento() {
           style={styles.containerValidaciones}>
           <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
             ¿Validacion de evidencias? {'\n'}
-            Escribir unicamente si o no
+            Por favor selecciona "SI" o "NO"
           </Text>
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center'
             }}>
-            <TextInput
-              onChangeText={(text) => setVali(text)}
-              style={styles.inputEvidencias}
-              maxLength={2} />
+            <Picker
+              mode="dropdown"
+              selectedValue={vali}
+              onValueChange={(value, index) =>
+                setVali(value)}
+                style={styles.dropDown} >
+              <Picker.Item label="Abrir" value="Unknown" />
+              <Picker.Item label="SI" value="siVali" />
+              <Picker.Item label="NO " value="noVali" />
+            </Picker>
           </View>
         </View>
 
@@ -231,25 +256,25 @@ export default async function AñadirEvento() {
           style={styles.containerValidaciones}>
           <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
             ¿Entrega de certificados? {'\n'}
-            Escribir unicamente si o no
+            Por favor selecciona "SI" o "NO"
           </Text>
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center'
             }}>
-            <TextInput
-              onChangeText={(text) => setCerti(text)}
-              style={styles.inputEvidencias}
-              maxLength={2} />
+             <Picker
+              mode="dropdown"
+              selectedValue={certi}
+              onValueChange={(value, index) =>
+                setCerti(value)}
+                style={styles.dropDown} >
+              <Picker.Item label="Abrir" value="Unknown" />
+              <Picker.Item label="SI" value="siCerti" />
+              <Picker.Item label="NO " value="noCerti" />
+            </Picker>
           </View>
         </View>
-
-        {/* Boton para enviar evento 
-      <TouchableOpacity
-        style={styles.buttonEnviar}>
-        <Text style={{ color: 'black' }}>Guardar evento</Text>
-      </TouchableOpacity>*/}
 
         <Funcionalidades
           title={"Registrar evento"}
@@ -272,31 +297,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    borderWidth: 4,
-    borderRadius: 8,
-    borderColor: '#FE895C'
+
   },
   buttonFoto: {
     width: 150,
+    height: 150,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
-    margin: 15,
-    borderRightWidth: 5,
-    borderBottomWidth: 5,
-    borderRadius: 6,
-    borderRightColor: '#FAC3AE',
-    borderBottomColor: '#FAC3AE',
+    padding: 5,
+    margin: 5,
+    borderWidth: 3,
+    borderRadius: 75,
+    borderColor: 'grey',
+  },
+  fotoEvento: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginTop: 10,
+    resizeMode: 'cover',
   },
   containerFoto: {
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
     marginBottom: 7
   },
   containerEventoInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 7
+    padding: 10,
+    marginBottom: 15,
+    marginEnd: -1,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   tituloEvento: {
     alignSelf: 'center',
@@ -310,40 +343,36 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
-  inputEventos: {
-    borderRightWidth: 5,
-    borderBottomWidth: 5,
-    borderRadius: 6,
-    borderRightColor: '#FAC3AE',
-    borderBottomColor: '#FAC3AE',
-    margin: 10,
-    padding: 5,
-  },
   inputEventosDesc: {
-    flex: 1,
-    height: 100,
+    flex: -1,
+    width: '100%',
     textAlignVertical: 'top',
-    borderRightWidth: 5,
-    borderBottomWidth: 5,
-    borderRadius: 6,
-    borderRightColor: '#FAC3AE',
+    margin: 5,
+    padding: 5,
     borderBottomColor: '#FAC3AE',
-    margin: 10,
-    padding: 5
+    borderBottomWidth: 3.5
   },
   containerFechaEvento: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
     borderTopColor: '#FAC3AE',
-    borderTopWidth: 4.5
+    borderTopWidth: 5
   },
   containerValidaciones: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
     borderTopColor: '#FAC3AE',
-    borderTopWidth: 4.5
+    borderTopWidth: 5
+  },
+  dropDown:{
+    flex: 1,
+    marginVertical: 30,
+    width: 300,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#666",
   },
   inputEvidencias: {
     alignSelf: 'center',
