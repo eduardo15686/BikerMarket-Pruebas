@@ -12,11 +12,11 @@ import {
 } from "react-native";
 import { React, useState } from "react";
 
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system'
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+
 
 import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
@@ -213,17 +213,17 @@ export default function AñadirEvento() {
               />
             </View>
           )}
-          {isPickerShow && (
-            <DateTimePicker
-              value={date}
-              mode={"date"}
-              display={Platform.OS === "ios" ? "spinner" : "spinner"}
-              negative={{ label: "Cancel", textColor: "red" }}
-              positiveButton="OK!"
-              timeZoneName={"America/Mexico_City"}
-              onChange={onChangeStart}
-            />
-          )}
+          {/* {isPickerShow && (
+            // <DateTimePicker
+            //   value={date}
+            //   mode={"date"}
+            //   display={Platform.OS === "ios" ? "spinner" : "spinner"}
+            //   negative={{ label: "Cancel", textColor: "red" }}
+            //   positiveButton="OK!"
+            //   timeZoneName={"America/Mexico_City"}
+            //   onChange={onChangeStart}
+            // />
+          )} */}
 
           {/* Fecha de finalizacion */}
           <View style={{ fontSize: 20, color: "#FE895C" }}>
@@ -241,14 +241,14 @@ export default function AñadirEvento() {
               />
             </View>
           )}
-          {isPickerShowEnd && (
-            <DateTimePicker
-              value={endDate}
-              mode={"date"}
-              display={Platform.OS === "ios" ? "spinner" : "spinner"}
-              onChange={onChangeEnd}
-            />
-          )}
+          {/* {isPickerShowEnd && (
+            // <DateTimePicker
+            //   value={endDate}
+            //   mode={"date"}
+            //   display={Platform.OS === "ios" ? "spinner" : "spinner"}
+            //   onChange={onChangeEnd}
+            // />
+          )} */}
         </View>
 
         {/* Validaciones */}
