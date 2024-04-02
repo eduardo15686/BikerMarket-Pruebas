@@ -32,7 +32,7 @@ export default function EventRegister({ route }) {
   const [image, setImage] = useState(null);
   const [userData, setUserData] = useState(null);
   const [userRegister, setUserRegister] = useState({
-    fecha_nacimiento: "",
+    fecha_nacimiento: Date(),
   });
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -219,6 +219,7 @@ export default function EventRegister({ route }) {
                   confirmTextIOS="Confirmar"
                   onConfirm={handleConfirm}
                   onCancel={hideDatePicker}
+                  date={new Date()}
                 />
               </View>
             </View>

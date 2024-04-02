@@ -21,7 +21,7 @@ import { FIREBASE_DB } from "../../credentials";
 
 export default function Rally() {
   const auth = getAuth(firebaseAuth);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState();
 
   const handleLogOut = () => {
     signOut(auth)
@@ -36,49 +36,47 @@ export default function Rally() {
   const { navigate } = useNavigation();
   const navigation = useNavigation();
 
-  const getDocument = async (user) => {
-    console.log(user);
-    try {
-      const docRef = doc(FIREBASE_DB, "users", `${user}`);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setUserData(docSnap.data());
-      } else {
-        setUserData(null);
-        console.log("No document!");
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useLayoutEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        getDocument(user.uid);
-        navigation.setOptions({
-          headerRight: () => (
-            <Pressable
-              onPress={() =>
-                navigate("Registro para Eventos", {
-                  user: user.uid,
-                })
-              }
-            >
-              <Image
-                source={{
-                  uri: userData.foto_url,
-                }}
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 100,
-                  marginBottom: 7,
-                }}
-              />
-            </Pressable>
-          ),
-        });
+        const getDocument = async () => {
+          try {
+            const docRef = doc(FIREBASE_DB, "users", `${user.uid}`);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              setUserData(docSnap.data());
+              navigation.setOptions({
+                headerRight: () => (
+                  <Pressable
+                    onPress={() =>
+                      navigate("Registro para Eventos", {
+                        user: user.uid,
+                      })
+                    }
+                  >
+                    <Image
+                      source={{
+                        uri: docSnap.data().foto_url,
+                      }}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 100,
+                        marginBottom: 7,
+                      }}
+                    />
+                  </Pressable>
+                ),
+              });
+            } else {
+              setUserData(null);
+              console.log("No document!");
+            }
+          } catch (e) {
+            console.log(e);
+          }
+        };
+        getDocument();
       }
     });
   }, []);
