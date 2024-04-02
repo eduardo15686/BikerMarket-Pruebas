@@ -16,10 +16,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseAuth from "../../credentials";
 import { StatusBar } from "expo-status-bar";
+import { collection, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { FIREBASE_DB } from "../../credentials";
 
 export default function Rally() {
   const auth = getAuth(firebaseAuth);
-  const [userLogged, setUserLogged] = useState();
+  const [userData, setUserData] = useState(null);
 
   const handleLogOut = () => {
     signOut(auth)
@@ -34,9 +36,26 @@ export default function Rally() {
   const { navigate } = useNavigation();
   const navigation = useNavigation();
 
+  const getDocument = async (user) => {
+    console.log(user);
+    try {
+      const docRef = doc(FIREBASE_DB, "users", `${user}`);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setUserData(docSnap.data());
+      } else {
+        setUserData(null);
+        console.log("No document!");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useLayoutEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        getDocument(user.uid);
         navigation.setOptions({
           headerRight: () => (
             <Pressable
@@ -47,7 +66,9 @@ export default function Rally() {
               }
             >
               <Image
-                source={require("../../assets/defaultProfile.webp")}
+                source={{
+                  uri: userData.foto_url,
+                }}
                 style={{
                   width: 40,
                   height: 40,
