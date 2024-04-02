@@ -14,7 +14,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
-import firebaseAuth from "../../credentials";
+import { firebaseAuth } from "../../credentials";
 import { StatusBar } from "expo-status-bar";
 import { collection, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../../credentials";
