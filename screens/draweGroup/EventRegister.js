@@ -152,6 +152,7 @@ export default function EventRegister({ route }) {
                 }}
               >
                 <Text style={styles.text}>Apodo</Text>
+                <Text style={styles.text}>Apodo</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Apodo"
