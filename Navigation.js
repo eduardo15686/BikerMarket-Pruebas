@@ -16,7 +16,7 @@ import Login from "./screens/principal/Login";
 import Register from "./screens/principal/Register";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import firebaseAuth from "../BikerMarket-Pruebas/credentials";
+import firebaseAuth from "../navigation/credentials";
 
 import {
   getAuth,
@@ -131,7 +131,7 @@ function TabGroup() {
           component={AdminGroup}
           options={{ headerShown: false }}
         />
-        <Tab.Screen name="Bandeja" component={Bandeja} />
+        <Tab.Screen name="Bandeja" component={AñadirEvento} />
         <Tab.Screen name="Configuración" component={Configuracion} />
       </Tab.Navigator>
     );
