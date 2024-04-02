@@ -103,7 +103,7 @@ function StackGroup() {
   );
 }
 //admin
-const rol = "admin";
+const rol = "user";
 //usuarios
 function TabGroup() {
   if (rol == "admin") {
@@ -160,7 +160,7 @@ function TabGroup() {
           component={StackGroup}
           options={{ headerShown: false }}
         />
-        <Tab.Screen name="Bandeja" component={Bandeja} />
+        <Tab.Screen name="Bandeja" component={AñadirEvento} />
         <Tab.Screen name="Configuración" component={Configuracion} />
       </Tab.Navigator>
     );

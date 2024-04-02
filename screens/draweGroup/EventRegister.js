@@ -14,14 +14,13 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import firebaseAuth from "../../credentials";
+import { getAuth } from "firebase/auth";
 import { FIREBASE_DB } from "../../credentials";
 import FIREBASE_APP from "../../credentials";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
-import { async } from "@firebase/util";
-import { Picker } from "@react-native-picker/picker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import moment from "moment";
 
 import RNPickerSelect from "react-native-picker-select";
 
@@ -32,7 +31,28 @@ export default function EventRegister({ route }) {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [userRegister, setUserRegister] = useState({
+    fecha_nacimiento: "",
+  });
+
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    //console.log("A date has been picked: ", date);
+    const fecha = Date(date);
+    const NewDate = moment(date).format("DD/MM/YYYY");
+    setUserRegister({ ...userRegister, fecha_nacimiento: NewDate });
+    hideDatePicker();
+    console.log(NewDate);
+  };
 
   // Listen to onAuthStateChanged
   const usuario = route.params.user;
@@ -152,7 +172,6 @@ export default function EventRegister({ route }) {
                 }}
               >
                 <Text style={styles.text}>Apodo</Text>
-                <Text style={styles.text}>Apodo</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="Apodo"
@@ -191,13 +210,16 @@ export default function EventRegister({ route }) {
                 }}
               >
                 <Text style={styles.text}>Fecha de nacimiento</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="dd/mm/aaaa"
-                  placeholderTextColor="gray"
-                  autoCapitalize={"characters"}
-                  value={userData.apodo}
-                ></TextInput>
+                <Text>{userRegister.fecha_nacimiento}</Text>
+                <Button title="Selecionar Fecha" onPress={showDatePicker} />
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="date"
+                  cancelTextIOS="Cancelar"
+                  confirmTextIOS="Confirmar"
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                />
               </View>
             </View>
             <View>
