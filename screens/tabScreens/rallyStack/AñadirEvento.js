@@ -17,14 +17,25 @@ import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system'
 
+import { getAuth } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import firebaseAuth from "../../../credentials";
+import  FIREBASE_DB  from "../../../credentials";
 import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
+import { updateDoc, doc, collection } from "firebase/firestore";
 
-export default function AñadirEvento() {
+const auth = getAuth(firebaseAuth);
+const storage = getStorage(FIREBASE_APP);
+
+
+console.log(Funcionalidades.ejemplo);
+export default function AñadirEvento(props) {
+  
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
-  const [date, setDate] = useState(new Date(Date.now())); //useState para tomar fecha y mostrarla: datePicker inicio
-  const [endDate, setEndDate] = useState(new Date(Date.now())); //useState para tomar fecha y mostrarla: datePicker fin
+  const [date, setDate] = useState(new Date()); //useState para tomar fecha y mostrarla: datePicker inicio
+  const [endDate, setEndDate] = useState(new Date()); //useState para tomar fecha y mostrarla: datePicker fin
 
   const [fotoEvento, setFotoEvento] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -32,82 +43,26 @@ export default function AñadirEvento() {
   const [nameEvent, setNameEvent] = useState("");
   const [descEvent, setDescEvent] = useState("");
   const [vali, setVali] = useState("Unknown");
-  const [certi, setCerti] = useState("Unkwon");
+  const [certi, setCerti] = useState("Unknown");
+
+  const [userID, setUserID] = useState(auth.currentUser.uid);
+
 
   const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 4],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       setFotoEvento(result.assets[0].uri);
     }
   };
 
-  //subir imagen
-
-  const uploadMedia = async () => {
-    setUploading(true);
-    try {
-      const { uri } = await FileSystem.getInfoAsync(fotoEvento);
-      const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = () => {
-          resolve(xhr.response);
-        };
-        xhr.onerror = (e) => {
-          reject(new TypeError('Network request failed'));
-        };
-        xhr.responseType = 'blob';
-        xhr.open('GET', uri, true);
-        xhr.send(null);
-      });
-      const filename = fotoEvento.substring(fo.lastIndexOf('/') + 1);
-      const ref = FIREBASE_APP.storage().ref().child(filename);
-
-      await ref.put(blob);
-      setUploading(false);
-      Alert.alert('Imagen guardada');
-      setFotoEvento(null);
-    } catch (error) {
-      console.log(error);
-      setUploading(false);
-    }
-  }
-
-
-
-  // try {
-  //   const { uri } = await FileSystem.getInfoAsync(fotoEvento);
-  //   const blob = await new Promise((resolve, reject) => {
-  //     const xhr = new XMLHttpRequest();
-  //     xhr.onload = () => {
-  //       resolve(xhr.response);
-  //     };
-  //     xhr.onerror = (e) => {
-  //       reject(new TypeError('Network request failed'));
-  //     };
-  //     xhr.responseType = 'blob';
-  //     xhr.open('GET', uri, true);
-  //     xhr.send(null);
-  //   });
-  //   const filename = fotoEvento.substring(fo.lastIndexOf('/') + 1);
-  //   const ref = FIREBASE_APP.storage().ref().child(filename);
-
-  //   await ref.put(blob);
-  //   setUploading(false);
-  //   Alert.alert('Imagen guardada');
-  //   setFotoEvento(null);
-  // } catch (error) {
-  //   console.log(error);
-  //   setUploading(false);
-  // }
-
+ 
 
   const showPicker = () => {
     setIsPickerShow(true);
@@ -129,9 +84,9 @@ export default function AñadirEvento() {
       setIsPickerShowEnd(false);
     }
   };
-
   return (
     <ScrollView>
+     <Button title="Subir imagen"></Button> 
       <View style={styles.containerPrincipal}>
         <Text style={styles.tituloEvento}>Añadir Evento</Text>
 
@@ -140,13 +95,13 @@ export default function AñadirEvento() {
           <TouchableOpacity
             style={styles.buttonFoto}
             onPress={pickImage}>
-              {!fotoEvento && <Text>Añadir evento</Text>}
+            {!fotoEvento && <Text>Añadir evento</Text>}
 
-            {fotoEvento && 
-            <><Image source={{ uri: fotoEvento }} style={styles.fotoEvento} />
-           <View style={styles.containerFoto}>
-            </View> 
-            </>
+            {fotoEvento &&
+              <><Image source={{ uri: fotoEvento }} style={styles.fotoEvento} />
+                <View style={styles.containerFoto}>
+                </View>
+              </>
             }
           </TouchableOpacity>
 
@@ -214,12 +169,13 @@ export default function AñadirEvento() {
           )}
           {isPickerShow && (
             <DateTimePicker
-              value={date}
+              value={new Date()}
               mode={"date"}
               display={Platform.OS === "ios" ? "spinner" : "spinner"}
               negative={{ label: "Cancel", textColor: "red" }}
               positiveButton="OK!"
               timeZoneName={"America/Mexico_City"}
+              locale="es-ES"
               onChange={onChangeStart}
             />
           )}
@@ -242,9 +198,13 @@ export default function AñadirEvento() {
           )}
           {isPickerShowEnd && (
             <DateTimePicker
-              value={endDate}
+              value={new Date()}
               mode={"date"}
               display={Platform.OS === "ios" ? "spinner" : "spinner"}
+              negative={{ label: "Cancel", textColor: "red" }}
+              positiveButton="OK!"
+              timeZoneName={"America/Mexico_City"}
+              locale="es-ES"
               onChange={onChangeEnd}
             />
           )}
@@ -268,7 +228,7 @@ export default function AñadirEvento() {
               selectedValue={vali}
               onValueChange={(value, index) =>
                 setVali(value)}
-                style={styles.dropDown} >
+              style={styles.dropDown} >
               <Picker.Item label="Abrir" value="Unknown" />
               <Picker.Item label="SI" value="siVali" />
               <Picker.Item label="NO " value="noVali" />
@@ -287,12 +247,12 @@ export default function AñadirEvento() {
               flexDirection: 'row',
               alignItems: 'center'
             }}>
-             <Picker
+            <Picker
               mode="dropdown"
               selectedValue={certi}
               onValueChange={(value, index) =>
                 setCerti(value)}
-                style={styles.dropDown} >
+              style={styles.dropDown} >
               <Picker.Item label="Abrir" value="Unknown" />
               <Picker.Item label="SI" value="siCerti" />
               <Picker.Item label="NO " value="noCerti" />
@@ -302,6 +262,8 @@ export default function AñadirEvento() {
 
         <Funcionalidades
           title={"Registrar evento"}
+          eventPhoto={fotoEvento}
+          UID={userID}
           eventName={nameEvent}
           eventDesc={descEvent}
           dateInit={date.toUTCString()}
@@ -390,7 +352,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#FAC3AE',
     borderTopWidth: 5
   },
-  dropDown:{
+  dropDown: {
     flex: 1,
     marginVertical: 30,
     width: 300,
