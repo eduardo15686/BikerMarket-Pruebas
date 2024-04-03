@@ -16,7 +16,7 @@ import Login from "./screens/principal/Login";
 import Register from "./screens/principal/Register";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { firebaseAuth } from "./credentials";
+import firebaseAuth from "./credentials";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -168,22 +168,7 @@ function TabGroup() {
 
 export default function Navigation() {
   const currentTheme = useColorScheme();
-  const [isLogged, setIsLogged] = useState(null);
-
-  useEffect(() => {
-    if (auth) {
-      const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-        if (authUser) {
-          setIsLogged(authUser.uid);
-        } else {
-          setIsLogged(null);
-        }
-      });
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, []);
+  const [isLogged, setIsLogged] = useState(auth.currentUser.uid);
 
   const tipoUsuario = "admin";
   if (isLogged == null) {
