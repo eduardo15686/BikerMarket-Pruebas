@@ -29,7 +29,6 @@ const auth = getAuth(firebaseAuth);
 const storage = getStorage(FIREBASE_APP);
 
 
-console.log(Funcionalidades.ejemplo);
 export default function AñadirEvento(props) {
   
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
@@ -86,7 +85,6 @@ export default function AñadirEvento(props) {
   };
   return (
     <ScrollView>
-     <Button title="Subir imagen"></Button> 
       <View style={styles.containerPrincipal}>
         <Text style={styles.tituloEvento}>Añadir Evento</Text>
 

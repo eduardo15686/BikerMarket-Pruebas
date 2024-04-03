@@ -145,7 +145,6 @@ export default function funcionalidades(props) {
       }
       )
       Alert.alert("¡Evento registrado!")
-      console.log(url)
     } catch (error) {
       console.log(error);
     }
