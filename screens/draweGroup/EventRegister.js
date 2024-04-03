@@ -215,6 +215,7 @@ export default function EventRegister({ route }) {
                 <DateTimePickerModal
                   isVisible={isDatePickerVisible}
                   mode="date"
+                  locale="es-Es"
                   display="spinner"
                   cancelTextIOS="Cancelar"
                   confirmTextIOS="Confirmar"

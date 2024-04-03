@@ -168,7 +168,22 @@ function TabGroup() {
 
 export default function Navigation() {
   const currentTheme = useColorScheme();
-  const [isLogged, setIsLogged] = useState(auth.currentUser.uid);
+  const [isLogged, setIsLogged] = useState(null);
+  
+  useEffect(() => {
+    if (auth) {
+      const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+        if (authUser) {
+          setIsLogged(authUser.uid);
+        } else {
+          setIsLogged(null);
+        }
+      });
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, []);
 
   const tipoUsuario = "admin";
   if (isLogged == null) {
