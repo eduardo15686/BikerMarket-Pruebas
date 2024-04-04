@@ -12,6 +12,12 @@ import {
 import { FIREBASE_DB } from "../credentials";
 import { collection, setDoc, doc, addDoc } from "firebase/firestore";
 
+import AñadirEvento from "../screens/tabScreens/rallyStack/AñadirEvento";
+import EventRegister from "../screens/draweGroup/EventRegister";
+
+import * as FileSystem from 'expo-file-system';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { FIREBASE_APP } from "../credentials";
 export default function funcionalidades(props) {
   const auth = getAuth(firebaseAuth);
 
@@ -79,7 +85,7 @@ export default function funcionalidades(props) {
             }
             if (props.callFunction == "handleRegisterEvent") {
               handleRegisterEvent();
-              
+
             }
           }}
           style={{ alignItems: "center", justifyContent: "center" }}
@@ -90,36 +96,59 @@ export default function funcionalidades(props) {
     </View>
   );
 
-///Registrar evento  
- 
- async function handleRegisterEvent() {
-  if (props.eventName === "" || props.eventDesc === "" || props.validation === "" || props.certification === "" ) {
-    Alert.alert("Error", "Por favor, llene todos los cambios");
-    return;
-  }
-  if (props.validation !== "si" || props.validation !== "no" && props.certification !== "si" || props.certification !== "no") {
-    Alert.alert("Error", "Campos de validación y certificación deben ser 'si' o 'no'");
-    return;
-    
-  }
-try {
-  
-  await addDoc(collection(FIREBASE_DB, "events" ), {
-    auth,
-    eventName: props.eventName,
-    eventDesc: props.eventDesc,
-    dateInit: props.dateInit,
-    dateEnd: props.dateEnd,
-    validation: props.validation,
-    certification: props.certification
-  }
-  )
-  Alert.alert("¡Evento registrado!")
-} catch (error) {
-  console.log( error);
-}
-}
-
-}
 
 
+  ///Registrar evento  
+  async function handleRegisterEvent() {
+
+    const storage = getStorage(FIREBASE_APP);
+    if (props.eventName === "" || props.eventDesc === "" || props.validation === "" || props.certification === "") {
+      Alert.alert("Error", "Por favor, llene todos los cambios");
+      return;
+    }
+    if (props.validation == "unknown" || props.certification == "unknown") {
+      Alert.alert("No olvide seleccionar la certificacion o validacion");
+      return;
+
+    }
+    try {
+      const { uri } = await FileSystem.getInfoAsync(props.eventPhoto);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          resolve(xhr.response);
+        };
+        xhr.onerror = (e) => {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', uri, true);
+        xhr.send(null);
+      });
+      const filename = props.eventPhoto.substring(props.eventPhoto.lastIndexOf('/') + 1);
+
+      //const ref = FIREBASE_APP.storage().ref().child(filename);
+
+      const storageRef = ref(storage, "foto-evento/" + `${filename}`);
+      await uploadBytes(storageRef, blob).then((snapshot) => { });
+      const url = await getDownloadURL(storageRef);
+      
+      const setData = await addDoc(collection(FIREBASE_DB, "events"), {
+        eventPhoto: url,
+        userID: props.UID,
+        eventName: props.eventName,
+        eventDesc: props.eventDesc,
+        dateInit: props.dateInit,
+        dateEnd: props.dateEnd,
+        validation: props.validation,
+        certification: props.certification
+      }
+      )
+      Alert.alert("¡Evento registrado!")
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+}

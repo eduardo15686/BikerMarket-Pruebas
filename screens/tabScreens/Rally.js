@@ -10,18 +10,37 @@ import {
   ScrollView,
   Button,
 } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseAuth from "../../credentials";
 import { StatusBar } from "expo-status-bar";
-import { collection, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, setDoc, doc, getDoc, updateDoc, getDocs, query, onSnapshot } from "firebase/firestore";
 import { FIREBASE_DB } from "../../credentials";
+import  {ref, onValue} from "firebase/storage";
 
 export default function Rally() {
   const auth = getAuth(firebaseAuth);
   const [userData, setUserData] = useState();
+
+  const [todoData, setTodoData] = useState([]);
+
+  useEffect (() => {
+    const getEvent = () => {
+    const q =  query(collection(FIREBASE_DB, "events"));
+    const arrayEmpty = [];
+    const sendData = onSnapshot(q, (querySnapshot) => {
+      
+      querySnapshot.forEach((doc) => {
+        arrayEmpty.push(doc.data());
+        console.log("Data: ", doc.data().userID);
+      });
+    });
+    setTodoData(arrayEmpty);
+    }
+   getEvent();
+  }, [])
 
   const handleLogOut = () => {
     signOut(auth)
@@ -84,27 +103,30 @@ export default function Rally() {
   const theme = useColorScheme();
 
   return (
+ 
     <ScrollView>
       <View style={styles.container}>
-        <View style={styles.user}>
-          <Image
-            style={styles.image}
-            source={require("../../assets/bikerlogo.png")}
-          />
-          <View style={styles.userInfo}>
-            <Text style={styles.title}>RODANDO A LO GRANDE</Text>
-            <Text style={styles.subTitle}>Descripcion:</Text>
-            <Text style={styles.userText}>
-              {
-                "Una prueba de todo lo que lleva este ejmplo de card de no más de 100 caracteres "
-              }
-            </Text>
-            <Text style={[{}, styles.subTitle]}>
-              Fecha de inicio: 10/12/2024
-            </Text>
-          </View>
-        </View>
-        <StatusBar style="auto" />
+       
+      {todoData.map((item, index) => {
+          return( 
+            <View style={styles.user} key={index}>
+                <Image
+                style={styles.image}
+                source={{uri: item.eventPhoto}} />
+                <View style={styles.userInfo}>
+                <Text style={styles.title}>{item.eventName}</Text>
+                <Text style={styles.subTitle}>Descripcion:</Text>
+                <Text style={styles.userText}>
+                  {item.eventDesc}
+                </Text>
+                <Text style={ styles.subTitle}>
+                  Fecha de inicio: {item.dateInit}
+                </Text>
+                </View>
+              </View>
+          );
+
+        })}
       </View>
     </ScrollView>
     // <ScrollView style={{ marginTop: 15 }}>
