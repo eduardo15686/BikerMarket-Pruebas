@@ -28,11 +28,13 @@ import {
   query,
   where,
   addDoc,
+  onSnapshot,
+  orderBy,
+  whereEqualTo,
 } from "firebase/firestore";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import estados from "../../estados.json";
-import municipios from "../../estados-municipios.json";
 
 import RNPickerSelect from "react-native-picker-select";
 
@@ -43,7 +45,7 @@ export default function EventRegister({ route }) {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [verificar, setVerificar] = useState(true);
+  const [municipios, setMunicipios] = useState([]);
   const [userRegister, setUserRegister] = useState({
     fecha_nacimiento: Date(),
   });
@@ -70,7 +72,6 @@ export default function EventRegister({ route }) {
   // Listen to onAuthStateChanged
 
   const usuario = route.params.user;
-
   useEffect(() => {
     const getDocument = async () => {
       setLoading(true);
@@ -101,25 +102,22 @@ export default function EventRegister({ route }) {
     getMunicipios(valor);
   };
 
-  let tempMunicipios = [];
-  let elementos = "";
-
   const getMunicipios = async (valor) => {
-    tempMunicipios = [];
     const q = query(
       collection(FIREBASE_DB, "municipios"),
-      where("estado_id", "==", valor)
+      where("estado_id", "==", valor),
+      orderBy("nombre", "asc")
     );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      // console.log(doc.id, " => ", doc.data().nombre);
-      tempMunicipios.push({
-        label: `${doc.data().nombre}`,
-        value: `${doc.data().nombre}`,
+    const arrayEmpty = [];
+    onSnapshot(q, (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        arrayEmpty.push({
+          label: `${doc.data().nombre}`,
+          value: `${doc.data().nombre}`,
+        });
       });
+      setMunicipios(arrayEmpty);
     });
-    setVerificar(false);
   };
 
   const uploadImage = async () => {
@@ -162,15 +160,6 @@ export default function EventRegister({ route }) {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
-  };
-
-  const pruebas = async () => {
-    // municipios["Zacatecas"].map((userData) => {
-    //   addDoc(collection(FIREBASE_DB, "municipios"), {
-    //     estado_id: "Zacatecas".toUpperCase(),
-    //     nombre: userData.toUpperCase(),
-    //   });
-    // });
   };
 
   if (userData === null) {
@@ -270,6 +259,7 @@ export default function EventRegister({ route }) {
                 <DateTimePickerModal
                   isVisible={isDatePickerVisible}
                   mode="date"
+                  locale="es-Es"
                   display="spinner"
                   cancelTextIOS="Cancelar"
                   confirmTextIOS="Confirmar"
@@ -289,6 +279,7 @@ export default function EventRegister({ route }) {
               >
                 <Text style={[{ marginBottom: 5 }, styles.text]}>Estado</Text>
                 <RNPickerSelect
+                  doneText="Aceptar"
                   placeholder={{ value: null, label: "Selecciona un Estado" }}
                   style={{ width: 100, flex: 1 }}
                   onValueChange={(value) => getEstados(value)}
@@ -307,31 +298,18 @@ export default function EventRegister({ route }) {
                 <Text style={[{ marginBottom: 5 }, styles.text]}>
                   Municipio
                 </Text>
-                <Text>{verificar}</Text>
-                {verificar ? (
-                  <RNPickerSelect
-                    placeholder={{
-                      value: null,
-                      label: "Selecciona un Municipio 1",
-                    }}
-                    style={{ width: 100, flex: 1 }}
-                    onValueChange={(value) => console.log(value)}
-                    items={tempMunicipios}
-                  />
-                ) : (
-                  <RNPickerSelect
-                    placeholder={{
-                      value: null,
-                      label: "Selecciona un Municipio 2",
-                    }}
-                    style={{ width: 100, flex: 1 }}
-                    onValueChange={(value) => console.log(value)}
-                    items={tempMunicipios}
-                  />
-                )}
+                <RNPickerSelect
+                  doneText="Aceptar"
+                  placeholder={{
+                    value: null,
+                    label: "Selecciona un Municipio",
+                  }}
+                  style={{ width: 100, flex: 1 }}
+                  onValueChange={(value) => console.log(value)}
+                  items={municipios}
+                />
               </View>
             </View>
-
             {/* datos medicos */}
             <View style={{ marginTop: 15 }}>
               <Text
