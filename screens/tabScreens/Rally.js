@@ -29,15 +29,16 @@ export default function Rally() {
   useEffect (() => {
     const getEvent = () => {
     const q =  query(collection(FIREBASE_DB, "events"));
-    const arrayEmpty = [];
+    
     const sendData = onSnapshot(q, (querySnapshot) => {
-      
+      const arrayEmpty = [];
       querySnapshot.forEach((doc) => {
         arrayEmpty.push(doc.data());
         console.log("Data: ", doc.data().userID);
       });
+      setTodoData(arrayEmpty);
     });
-    setTodoData(arrayEmpty);
+    
     }
    getEvent();
   }, [])
