@@ -18,9 +18,21 @@ import { getAuth } from "firebase/auth";
 import { FIREBASE_DB } from "../../credentials";
 import FIREBASE_APP from "../../credentials";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { collection, setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  getDocs,
+  query,
+  where,
+  addDoc,
+} from "firebase/firestore";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
+import estados from "../../estados.json";
+import municipios from "../../estados-municipios.json";
 
 import RNPickerSelect from "react-native-picker-select";
 
@@ -31,16 +43,17 @@ export default function EventRegister({ route }) {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [verificar, setVerificar] = useState(true);
   const [userRegister, setUserRegister] = useState({
     fecha_nacimiento: Date(),
   });
 
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [estado, setEstado] = useState();
 
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
-
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
@@ -55,7 +68,9 @@ export default function EventRegister({ route }) {
   };
 
   // Listen to onAuthStateChanged
+
   const usuario = route.params.user;
+
   useEffect(() => {
     const getDocument = async () => {
       setLoading(true);
@@ -75,6 +90,37 @@ export default function EventRegister({ route }) {
     };
     getDocument();
   }, []);
+
+  const tempData = [];
+
+  estados.forEach((data) => {
+    tempData.push({ label: `${data.nombre}`, value: `${data.nombre}` });
+  });
+
+  const getEstados = async (valor) => {
+    getMunicipios(valor);
+  };
+
+  let tempMunicipios = [];
+  let elementos = "";
+
+  const getMunicipios = async (valor) => {
+    tempMunicipios = [];
+    const q = query(
+      collection(FIREBASE_DB, "municipios"),
+      where("estado_id", "==", valor)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      // console.log(doc.id, " => ", doc.data().nombre);
+      tempMunicipios.push({
+        label: `${doc.data().nombre}`,
+        value: `${doc.data().nombre}`,
+      });
+    });
+    setVerificar(false);
+  };
 
   const uploadImage = async () => {
     try {
@@ -116,6 +162,15 @@ export default function EventRegister({ route }) {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
+  };
+
+  const pruebas = async () => {
+    // municipios["Zacatecas"].map((userData) => {
+    //   addDoc(collection(FIREBASE_DB, "municipios"), {
+    //     estado_id: "Zacatecas".toUpperCase(),
+    //     nombre: userData.toUpperCase(),
+    //   });
+    // });
   };
 
   if (userData === null) {
@@ -232,15 +287,12 @@ export default function EventRegister({ route }) {
                   paddingRight: 10,
                 }}
               >
-                <Text style={styles.text}>Estado</Text>
+                <Text style={[{ marginBottom: 5 }, styles.text]}>Estado</Text>
                 <RNPickerSelect
+                  placeholder={{ value: null, label: "Selecciona un Estado" }}
                   style={{ width: 100, flex: 1 }}
-                  onValueChange={(value) => console.log(value)}
-                  items={[
-                    { label: "Football", value: "football" },
-                    { label: "Baseball", value: "baseball" },
-                    { label: "Hockey", value: "hockey" },
-                  ]}
+                  onValueChange={(value) => getEstados(value)}
+                  items={tempData}
                 />
               </View>
             </View>
@@ -252,18 +304,34 @@ export default function EventRegister({ route }) {
                   paddingRight: 10,
                 }}
               >
-                <Text style={styles.text}>Municipio</Text>
-                <RNPickerSelect
-                  style={{ width: 100, flex: 1 }}
-                  onValueChange={(value) => console.log(value)}
-                  items={[
-                    { label: "Football", value: "football" },
-                    { label: "Baseball", value: "baseball" },
-                    { label: "Hockey", value: "hockey" },
-                  ]}
-                />
+                <Text style={[{ marginBottom: 5 }, styles.text]}>
+                  Municipio
+                </Text>
+                <Text>{verificar}</Text>
+                {verificar ? (
+                  <RNPickerSelect
+                    placeholder={{
+                      value: null,
+                      label: "Selecciona un Municipio 1",
+                    }}
+                    style={{ width: 100, flex: 1 }}
+                    onValueChange={(value) => console.log(value)}
+                    items={tempMunicipios}
+                  />
+                ) : (
+                  <RNPickerSelect
+                    placeholder={{
+                      value: null,
+                      label: "Selecciona un Municipio 2",
+                    }}
+                    style={{ width: 100, flex: 1 }}
+                    onValueChange={(value) => console.log(value)}
+                    items={tempMunicipios}
+                  />
+                )}
               </View>
             </View>
+
             {/* datos medicos */}
             <View style={{ marginTop: 15 }}>
               <Text
