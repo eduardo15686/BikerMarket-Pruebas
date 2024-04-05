@@ -15,11 +15,11 @@ import { React, useState } from "react";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
-import { getAuth } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import firebaseAuth from "../../../credentials";
 import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
+import { getAuth } from "firebase/auth";
 const auth = getAuth(firebaseAuth);
 const storage = getStorage(FIREBASE_APP);
 
@@ -78,6 +78,9 @@ export default function AñadirEvento(props) {
       setIsPickerShowEnd(false);
     }
   };
+
+  const status = "Activo";
+
   return (
     <ScrollView>
       <View style={styles.containerPrincipal}>
@@ -255,6 +258,7 @@ export default function AñadirEvento(props) {
 
         <Funcionalidades
           title={"Registrar evento"}
+          status={status}
           eventPhoto={fotoEvento}
           UID={userID}
           eventName={nameEvent}
