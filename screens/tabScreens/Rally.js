@@ -117,14 +117,13 @@ export default function Rally() {
         {todoData.map((item, index) => {
 
           return (
-            
-            <View style={styles.user} key={index}>
-              <Image style={styles.image} source={{ uri: item.eventPhoto }} />
-              <TouchableOpacity style={{ flex: 1 }} onPress={() =>
+            <TouchableOpacity style={styles.user} key={index} onPress={() =>
                 navigation.navigate('Editar evento', {
                   data: item
                 }
                 )}>
+              <Image style={styles.image} source={{ uri: item.eventPhoto }} />
+              
 
                 <View style={styles.userInfo}>
                   <Text style={styles.title}>{item.eventName}</Text>
@@ -135,7 +134,7 @@ export default function Rally() {
                   </Text>
                 </View>
               </TouchableOpacity>
-            </View>
+            
 
           );
         })}

@@ -105,7 +105,7 @@ export default function funcionalidades(props) {
       Alert.alert("Error", "Por favor, llene todos los cambios");
       return;
     }
-    if (props.validation == "unknown" || props.certification == "unknown") {
+    if (props.validation === "unknown" || props.certification === "unknown") {
       Alert.alert("No olvide seleccionar la certificacion o validacion");
       return;
 
