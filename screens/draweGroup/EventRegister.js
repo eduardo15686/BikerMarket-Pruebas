@@ -9,6 +9,7 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
@@ -43,9 +44,21 @@ const storage = getStorage(FIREBASE_APP);
 
 export default function EventRegister({ route }) {
   const [image, setImage] = useState(null);
-  const [userData, setUserData] = useState({
-    seguroMedico: "",
-  });
+  const [userData, setUserData] = useState([
+    {
+      apodo: "aa",
+      celular: "",
+      estado: "",
+      fecha_nacimiento: "",
+      municipio: "",
+      nombre: "",
+      seguroMedico: "",
+      tipoSangre: "",
+      institucionMedica: "",
+      poliza: "",
+      estatus: "Activo",
+    },
+  ]);
   const [municipios, setMunicipios] = useState([]);
   const [userRegister, setUserRegister] = useState({
     fecha_nacimiento: Date(),
@@ -66,6 +79,7 @@ export default function EventRegister({ route }) {
     setUserRegister({ ...userRegister, fecha_nacimiento: NewDate });
     hideDatePicker();
     console.log(NewDate);
+    setUserData({ ...userData, fecha_nacimiento: date });
   };
 
   // Listen to onAuthStateChanged
@@ -165,7 +179,20 @@ export default function EventRegister({ route }) {
   };
 
   editarCambios = () => {
-    console.log(userData.seguroMedico);
+    console.log(userData);
+    updateDoc(doc(FIREBASE_DB, "users", `${usuario}`), {
+      apodo: userData.apodo,
+      celular: userData.celular,
+      estado: userData.estado,
+      fecha_nacimiento: userData.fecha_nacimiento,
+      foto_url: userData.foto_url,
+      municipio: userData.municipio,
+      nombre: userData.nombre,
+      seguroMedico: userData.seguroMedico,
+      tipoSangre: userData.tipoSangre,
+      institucionMedica: userData.institucionMedica,
+      poliza: userData.poliza,
+    });
   };
 
   if (userData === null) {
@@ -179,15 +206,27 @@ export default function EventRegister({ route }) {
       <ScrollView>
         <View>
           <View style={styles.tarjeta}>
-            <View style={{ alignContent: "center", alignItems: "center" }}>
-              <Image
-                style={{ width: 150, height: 150, borderRadius: 100 }}
-                source={{
-                  uri: userData.foto_url,
-                }}
-              />
-              <Text style={{ fontWeight: "bold", marginTop: 15 }}>Editar</Text>
-            </View>
+            {userData.foto_url == "" ? (
+              <View style={{ alignContent: "center", alignItems: "center" }}>
+                <Image
+                  style={{ width: 150, height: 150, borderRadius: 100 }}
+                  source={require("../../assets/defaultProfile.webp")}
+                />
+              </View>
+            ) : (
+              <View style={{ alignContent: "center", alignItems: "center" }}>
+                <Image
+                  style={{ width: 150, height: 150, borderRadius: 100 }}
+                  source={{
+                    uri: userData.foto_url,
+                  }}
+                />
+                <Text style={{ fontWeight: "bold", marginTop: 15 }}>
+                  Editar
+                </Text>
+              </View>
+            )}
+
             {/* inputs */}
             <View style={{ marginTop: 15 }}>
               <Text
@@ -210,6 +249,9 @@ export default function EventRegister({ route }) {
                   placeholderTextColor="gray"
                   autoCapitalize={"characters"}
                   value={userData.nombre}
+                  onChangeText={(text) =>
+                    setUserData({ ...userData, nombre: text })
+                  }
                 ></TextInput>
               </View>
             </View>
@@ -228,6 +270,9 @@ export default function EventRegister({ route }) {
                   placeholderTextColor="gray"
                   autoCapitalize={"characters"}
                   value={userData.apodo}
+                  onChangeText={(text) =>
+                    setUserData({ ...userData, apodo: text })
+                  }
                 ></TextInput>
               </View>
             </View>
@@ -247,7 +292,10 @@ export default function EventRegister({ route }) {
                   keyboardType="numeric"
                   placeholderTextColor="gray"
                   autoCapitalize={"characters"}
-                  value={userData.apodo}
+                  value={userData.celular}
+                  onChangeText={(text) =>
+                    setUserData({ ...userData, celular: text })
+                  }
                 ></TextInput>
               </View>
             </View>
@@ -261,7 +309,7 @@ export default function EventRegister({ route }) {
               >
                 <Text style={styles.text}>Fecha de nacimiento</Text>
                 <Text>{userRegister.fecha_nacimiento}</Text>
-                <Button title="Selecionar Fecha" onPress={showDatePicker} />
+                <Button title="Seleccionar Fecha" onPress={showDatePicker} />
                 <DateTimePickerModal
                   isVisible={isDatePickerVisible}
                   mode="date"
@@ -288,7 +336,10 @@ export default function EventRegister({ route }) {
                   doneText="Aceptar"
                   placeholder={{ value: null, label: "Selecciona un Estado" }}
                   style={{ width: 100, flex: 1 }}
-                  onValueChange={(value) => getEstados(value)}
+                  onValueChange={(value) => {
+                    getEstados(value),
+                      setUserData({ ...userData, estado: value });
+                  }}
                   items={tempData}
                 />
               </View>
@@ -314,7 +365,9 @@ export default function EventRegister({ route }) {
                     width: 100,
                     flex: 1,
                   }}
-                  onValueChange={(value) => console.log(value)}
+                  onValueChange={(value) =>
+                    setUserData({ ...userData, municipio: value })
+                  }
                   items={municipios}
                 />
               </View>
@@ -338,13 +391,15 @@ export default function EventRegister({ route }) {
                   Tipo de Sangre
                 </Text>
                 <RNPickerSelect
-                  style={{ width: 100, flex: 1 }}
+                  style={{ width: 100, flex: 1, viewContainer: true }}
                   doneText="Aceptar"
                   placeholder={{
                     value: null,
                     label: "Selecciona un tipo de sangre",
                   }}
-                  onValueChange={(value) => console.log(value)}
+                  onValueChange={(value) =>
+                    setUserData({ ...userData, tipoSangre: value })
+                  }
                   items={[
                     { label: "A+", value: "A+" },
                     { label: "A-", value: "A-" },
@@ -398,7 +453,10 @@ export default function EventRegister({ route }) {
                       placeholder="Institución Médica"
                       placeholderTextColor="gray"
                       autoCapitalize={"characters"}
-                      value={userData.apodo}
+                      value={userData.institucionMedica}
+                      onChangeText={(text) =>
+                        setUserData({ ...userData, institucionMedica: text })
+                      }
                     ></TextInput>
                   </View>
                   <View
@@ -414,7 +472,10 @@ export default function EventRegister({ route }) {
                       placeholder="No. Poliza/ No. Afiliación"
                       placeholderTextColor="gray"
                       autoCapitalize={"characters"}
-                      value={userData.apodo}
+                      value={userData.poliza}
+                      onChangeText={(text) =>
+                        setUserData({ ...userData, poliza: text })
+                      }
                     ></TextInput>
                   </View>
                 </View>
