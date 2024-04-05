@@ -10,7 +10,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { FIREBASE_DB } from "../credentials";
-import { collection, setDoc, doc, addDoc } from "firebase/firestore";
+import { collection, setDoc, doc, addDoc, updateDoc, getDoc } from "firebase/firestore";
 
 
 
@@ -86,6 +86,9 @@ export default function funcionalidades(props) {
               handleRegisterEvent();
 
             }
+            if (props.callFunction == "handlerEditEvent") {
+              handlerEditEvent();
+            }
           }}
           style={{ alignItems: "center", justifyContent: "center" }}
         >
@@ -101,7 +104,7 @@ export default function funcionalidades(props) {
   async function handleRegisterEvent() {
 
     const storage = getStorage(FIREBASE_APP);
-    if (props.eventName === "" || props.eventDesc === "" || props.validation === "" || props.certification === "") {
+    if (props.eventName === "" || props.eventDesc === "") {
       Alert.alert("Error", "Por favor, llene todos los cambios");
       return;
     }
@@ -125,15 +128,13 @@ export default function funcionalidades(props) {
         xhr.send(null);
       });
       const filename = props.eventPhoto.substring(props.eventPhoto.lastIndexOf('/') + 1);
-
-      //const ref = FIREBASE_APP.storage().ref().child(filename);
-
       const storageRef = ref(storage, "foto-evento/" + `${filename}`);
       await uploadBytes(storageRef, blob).then((snapshot) => { });
       const url = await getDownloadURL(storageRef);
-      
+
       const setData = await addDoc(collection(FIREBASE_DB, "events"), {
         eventPhoto: url,
+        status: props.status,
         userID: props.UID,
         eventName: props.eventName,
         eventDesc: props.eventDesc,
@@ -149,5 +150,65 @@ export default function funcionalidades(props) {
     }
   }
 
+
+  ///Editar evento 
+  async function handlerEditEvent() {
+    const storage = getStorage(FIREBASE_APP);
+    if (props.editName === "" || props.editDesc === "") {
+      Alert.alert("Error", "Por favor, llene todos los cambios");
+      return;
+    }
+    try {
+      const dataEdit = doc(FIREBASE_DB, "events", props.UID);
+      const imagenURL = getDoc(dataEdit);
+
+      const pruebas = (await imagenURL).data().eventPhoto;
+      
+      if (pruebas != props.editPhoto) {
+        const { uri } = await FileSystem.getInfoAsync(props.editPhoto);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          resolve(xhr.response);
+        };
+        xhr.onerror = (e) => {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', uri, true);
+        xhr.send(null);
+      });
+      const filename = props.editPhoto.substring(props.editPhoto.lastIndexOf('/') + 1);
+      const storageRef = ref(storage, "foto-evento/" + `${filename}`);
+      await uploadBytes(storageRef, blob).then((snapshot) => { });
+      const urlEdit = await getDownloadURL(storageRef);
+      await updateDoc(dataEdit, {
+        eventPhoto: urlEdit,
+        eventName: props.editName,
+        eventDesc: props.editDesc,
+        dateInit: props.editInit,
+        dateEnd: props.editEnd,
+        validation: props.editVali,
+        certification: props.editCerti
+      })
+      console.log('editamos');
+      } else{
+        console.log('no se edito la foto');
+        await updateDoc(dataEdit, {
+          eventName: props.editName,
+          eventDesc: props.editDesc,
+          dateInit: props.editInit,
+          dateEnd: props.editEnd,
+          validation: props.editVali,
+          certification: props.editCerti
+        })
+        // Alert.alert("Evento sin foto editada!")
+      }
+      
+    } catch (error) {
+      console.log("Desde editar", error);
+      console.log(props.image);
+    }
+  }
 
 }

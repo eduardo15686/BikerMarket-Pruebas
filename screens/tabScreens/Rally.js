@@ -29,8 +29,6 @@ export default function Rally() {
   const [userData, setUserData] = useState();
 
   const [todoData, setTodoData] = useState([]);
-
-
   useEffect(() => {
     const getEvent = () => {
       const q = query(collection(FIREBASE_DB, "events"));
@@ -38,8 +36,8 @@ export default function Rally() {
       const sendData = onSnapshot(q, (querySnapshot) => {
         const arrayEmpty = [];
         querySnapshot.forEach((doc) => {
-          arrayEmpty.push(doc.data());
-          console.log("Data: ", doc.data().userID);
+          arrayEmpty.push({id: doc.id, datos:doc.data()});
+          
         });
         setTodoData(arrayEmpty);
       });
@@ -110,7 +108,7 @@ export default function Rally() {
 
 
   return (
-    
+
     <ScrollView>
 
       <View style={styles.container}>
@@ -118,26 +116,27 @@ export default function Rally() {
 
           return (
             <TouchableOpacity style={styles.user} key={index} onPress={() =>
-                navigation.navigate('Editar evento', {
-                  data: item
-                }
-                )}>
-              <Image style={styles.image} source={{ uri: item.eventPhoto }} />
-              
+              navigation.navigate('Editar evento', {
+                data: item
+              }
+              )}>
+              <Image style={styles.image} source={{ uri: item.datos.eventPhoto }} />
 
-                <View style={styles.userInfo}>
-                  <Text style={styles.title}>{item.eventName}</Text>
-                  <Text style={styles.subTitle}>Descripcion:</Text>
-                  <Text style={styles.userText}>{item.eventDesc}</Text>
-                  <Text style={styles.subTitle}>
-                    Fecha de inicio: {item.dateInit}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            
+
+              <View style={styles.userInfo}>
+                <Text style={styles.title}>{item.datos.eventName}</Text>
+                <Text style={styles.subTitle}>Descripcion:</Text>
+                <Text style={styles.userText}>{item.datos.eventDesc}</Text>
+                <Text style={styles.subTitle}>
+                  Fecha de inicio: {item.datos.dateInit}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
 
           );
         })}
+
       </View>
 
     </ScrollView>
