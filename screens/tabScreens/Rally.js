@@ -8,7 +8,8 @@ import {
   StyleSheet,
   Platform,
   ScrollView,
-  Button,
+  TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -18,7 +19,10 @@ import firebaseAuth from "../../credentials";
 import { StatusBar } from "expo-status-bar";
 import { collection, setDoc, doc, getDoc, updateDoc, getDocs, query, onSnapshot } from "firebase/firestore";
 import { FIREBASE_DB } from "../../credentials";
-import  {ref, onValue} from "firebase/storage";
+import { ref, onValue } from "firebase/storage";
+
+
+import { Tab } from "@rneui/base";
 
 export default function Rally() {
   const auth = getAuth(firebaseAuth);
@@ -26,22 +30,22 @@ export default function Rally() {
 
   const [todoData, setTodoData] = useState([]);
 
-  useEffect (() => {
+
+  useEffect(() => {
     const getEvent = () => {
-    const q =  query(collection(FIREBASE_DB, "events"));
-    
-    const sendData = onSnapshot(q, (querySnapshot) => {
-      const arrayEmpty = [];
-      querySnapshot.forEach((doc) => {
-        arrayEmpty.push(doc.data());
-        console.log("Data: ", doc.data().userID);
+      const q = query(collection(FIREBASE_DB, "events"));
+
+      const sendData = onSnapshot(q, (querySnapshot) => {
+        const arrayEmpty = [];
+        querySnapshot.forEach((doc) => {
+          arrayEmpty.push(doc.data());
+          console.log("Data: ", doc.data().userID);
+        });
+        setTodoData(arrayEmpty);
       });
-      setTodoData(arrayEmpty);
-    });
-    
-    }
-   getEvent();
-  }, [])
+    };
+    getEvent();
+  }, []);
 
   const handleLogOut = () => {
     signOut(auth)
@@ -103,32 +107,40 @@ export default function Rally() {
 
   const theme = useColorScheme();
 
-  return (
- 
-    <ScrollView>
-      <View style={styles.container}>
-       
-      {todoData.map((item, index) => {
-          return( 
-            <View style={styles.user} key={index}>
-                <Image
-                style={styles.image}
-                source={{uri: item.eventPhoto}} />
-                <View style={styles.userInfo}>
-                <Text style={styles.title}>{item.eventName}</Text>
-                <Text style={styles.subTitle}>Descripcion:</Text>
-                <Text style={styles.userText}>
-                  {item.eventDesc}
-                </Text>
-                <Text style={ styles.subTitle}>
-                  Fecha de inicio: {item.dateInit}
-                </Text>
-                </View>
-              </View>
-          );
 
+
+  return (
+    
+    <ScrollView>
+
+      <View style={styles.container}>
+        {todoData.map((item, index) => {
+
+          return (
+            
+            <View style={styles.user} key={index}>
+              <Image style={styles.image} source={{ uri: item.eventPhoto }} />
+              <TouchableOpacity style={{ flex: 1 }} onPress={() =>
+                navigation.navigate('Editar evento', {
+                  data: item
+                }
+                )}>
+
+                <View style={styles.userInfo}>
+                  <Text style={styles.title}>{item.eventName}</Text>
+                  <Text style={styles.subTitle}>Descripcion:</Text>
+                  <Text style={styles.userText}>{item.eventDesc}</Text>
+                  <Text style={styles.subTitle}>
+                    Fecha de inicio: {item.dateInit}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+          );
         })}
       </View>
+
     </ScrollView>
     // <ScrollView style={{ marginTop: 15 }}>
     //   <View>
@@ -144,6 +156,9 @@ export default function Rally() {
     // </ScrollView>
   );
 }
+
+
+
 
 const styles = StyleSheet.create({
   container: {

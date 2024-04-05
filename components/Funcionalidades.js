@@ -12,8 +12,7 @@ import {
 import { FIREBASE_DB } from "../credentials";
 import { collection, setDoc, doc, addDoc } from "firebase/firestore";
 
-import AñadirEvento from "../screens/tabScreens/rallyStack/AñadirEvento";
-import EventRegister from "../screens/draweGroup/EventRegister";
+
 
 import * as FileSystem from 'expo-file-system';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";

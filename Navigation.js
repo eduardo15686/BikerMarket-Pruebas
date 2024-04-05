@@ -27,7 +27,7 @@ import { useState, useEffect } from "react";
 import AñadirEvento from "./screens/tabScreens/rallyStack/AñadirEvento";
 import EventRegister from "./screens/draweGroup/EventRegister";
 import RallyAdmin from "./screens/tabScreens/RallyAdmin";
-
+import EditarEvento from "./EditarEvento";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -91,6 +91,7 @@ function StackGroup() {
         component={AñadirEvento}
         options={{}}
       />
+      <Stack.Screen name="Editar evento" component={EditarEvento} />
       <Stack.Screen
         name="Registro para Eventos"
         component={EventRegister}
