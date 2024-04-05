@@ -36,8 +36,8 @@ export default function AñadirEvento(props) {
 
   const [nameEvent, setNameEvent] = useState("");
   const [descEvent, setDescEvent] = useState("");
-  const [vali, setVali] = useState("Unknown");
-  const [certi, setCerti] = useState("Unknown");
+  const [vali, setVali] = useState("unknown");
+  const [certi, setCerti] = useState("unknown");
 
   const [userID, setUserID] = useState(auth.currentUser.uid);
 
@@ -207,7 +207,7 @@ export default function AñadirEvento(props) {
 
         <View
           style={styles.containerValidaciones}>
-          <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
+          <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
             ¿Validacion de evidencias? {'\n'}
             Por favor selecciona "SI" o "NO"
           </Text>
@@ -222,16 +222,16 @@ export default function AñadirEvento(props) {
               onValueChange={(value, index) =>
                 setVali(value)}
               style={styles.dropDown} >
-              <Picker.Item label="Abrir" value="Unknown" />
-              <Picker.Item label="SI" value="siVali" />
-              <Picker.Item label="NO " value="noVali" />
+              <Picker.Item label="Abrir" value="unknown" />
+              <Picker.Item label="SI" value="sivali" />
+              <Picker.Item label="NO " value="novali" />
             </Picker>
           </View>
         </View>
 
         <View
           style={styles.containerValidaciones}>
-          <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
+          <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
             ¿Entrega de certificados? {'\n'}
             Por favor selecciona "SI" o "NO"
           </Text>
@@ -246,9 +246,9 @@ export default function AñadirEvento(props) {
               onValueChange={(value, index) =>
                 setCerti(value)}
               style={styles.dropDown} >
-              <Picker.Item label="Abrir" value="Unknown" />
-              <Picker.Item label="SI" value="siCerti" />
-              <Picker.Item label="NO " value="noCerti" />
+              <Picker.Item label="Abrir" value="unknown" />
+              <Picker.Item label="SI" value="sicerti" />
+              <Picker.Item label="NO " value="nocerti" />
             </Picker>
           </View>
         </View>
@@ -290,17 +290,14 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
   },
   fotoEvento: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginTop: 10,
+    width: 150, 
+    height: 150, 
+    borderRadius: 100,
     resizeMode: 'cover',
   },
   containerFoto: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    marginBottom: 7
+    alignContent: "center", 
+    alignItems: "center"
   },
   containerEventoInfo: {
     padding: 10,
