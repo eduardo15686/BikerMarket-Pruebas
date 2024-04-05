@@ -42,17 +42,16 @@ const auth = getAuth();
 const storage = getStorage(FIREBASE_APP);
 
 export default function EventRegister({ route }) {
-  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState({
+    seguroMedico: "",
+  });
   const [municipios, setMunicipios] = useState([]);
   const [userRegister, setUserRegister] = useState({
     fecha_nacimiento: Date(),
   });
-
-  const [estado, setEstado] = useState();
-
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -74,7 +73,6 @@ export default function EventRegister({ route }) {
   const usuario = route.params.user;
   useEffect(() => {
     const getDocument = async () => {
-      setLoading(true);
       try {
         const docRef = doc(FIREBASE_DB, "users", `${usuario}`);
         const docSnap = await getDoc(docRef);
@@ -87,7 +85,6 @@ export default function EventRegister({ route }) {
       } catch (e) {
         console.log(e);
       }
-      setLoading(false);
     };
     getDocument();
   }, []);
@@ -160,6 +157,15 @@ export default function EventRegister({ route }) {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
+  };
+
+  const valiSeguroMedico = (value) => {
+    console.log(value);
+    setUserData({ ...userData, seguroMedico: value });
+  };
+
+  editarCambios = () => {
+    console.log(userData.seguroMedico);
   };
 
   if (userData === null) {
@@ -304,13 +310,17 @@ export default function EventRegister({ route }) {
                     value: null,
                     label: "Selecciona un Municipio",
                   }}
-                  style={{ width: 100, flex: 1 }}
+                  style={{
+                    width: 100,
+                    flex: 1,
+                  }}
                   onValueChange={(value) => console.log(value)}
                   items={municipios}
                 />
               </View>
             </View>
             {/* datos medicos */}
+
             <View style={{ marginTop: 15 }}>
               <Text
                 style={{ textAlign: "center", color: "#F15A24", fontSize: 20 }}
@@ -324,14 +334,26 @@ export default function EventRegister({ route }) {
                   paddingRight: 10,
                 }}
               >
-                <Text style={styles.text}>Tipo de Sangre</Text>
+                <Text style={[{ marginBottom: 5 }, styles.text]}>
+                  Tipo de Sangre
+                </Text>
                 <RNPickerSelect
                   style={{ width: 100, flex: 1 }}
+                  doneText="Aceptar"
+                  placeholder={{
+                    value: null,
+                    label: "Selecciona un tipo de sangre",
+                  }}
                   onValueChange={(value) => console.log(value)}
                   items={[
-                    { label: "Football", value: "football" },
-                    { label: "Baseball", value: "baseball" },
-                    { label: "Hockey", value: "hockey" },
+                    { label: "A+", value: "A+" },
+                    { label: "A-", value: "A-" },
+                    { label: "B+", value: "B+" },
+                    { label: "B-", value: "B-" },
+                    { label: "AB+", value: "AB+" },
+                    { label: "AB-", value: "AB-" },
+                    { label: "O+", value: "O+" },
+                    { label: "O-", value: "O-" },
                   ]}
                 />
               </View>
@@ -342,53 +364,71 @@ export default function EventRegister({ route }) {
                   paddingRight: 10,
                 }}
               >
-                <Text style={styles.text}>Seguro Medico</Text>
+                <Text style={[{ marginBottom: 5 }, styles.text]}>
+                  Seguro Medico
+                </Text>
                 <RNPickerSelect
+                  doneText="Aceptar"
+                  placeholder={{
+                    value: null,
+                    label: "¿Cuenta con seguro Medico?",
+                  }}
                   style={{ width: 100, flex: 1 }}
-                  onValueChange={(value) => console.log(value)}
+                  onValueChange={(value) => {
+                    valiSeguroMedico(value);
+                  }}
                   items={[
-                    { label: "Football", value: "football" },
-                    { label: "Baseball", value: "baseball" },
-                    { label: "Hockey", value: "hockey" },
+                    { label: "Si", value: "Si" },
+                    { label: "No", value: "No" },
                   ]}
                 />
               </View>
-              <View
-                style={{
-                  marginVertical: 10,
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                }}
-              >
-                <Text style={styles.text}>Institución Médica</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Institución Médica"
-                  placeholderTextColor="gray"
-                  autoCapitalize={"characters"}
-                  value={userData.apodo}
-                ></TextInput>
-              </View>
-              <View
-                style={{
-                  marginVertical: 10,
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                }}
-              >
-                <Text style={styles.text}>No. Poliza/ No. Afiliación</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="No. Poliza/ No. Afiliación"
-                  placeholderTextColor="gray"
-                  autoCapitalize={"characters"}
-                  value={userData.apodo}
-                ></TextInput>
-              </View>
+              {userData.seguroMedico == "Si" ? (
+                <View>
+                  <View
+                    style={{
+                      marginVertical: 10,
+                      paddingLeft: 10,
+                      paddingRight: 10,
+                    }}
+                  >
+                    <Text style={styles.text}>Institución Médica</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Institución Médica"
+                      placeholderTextColor="gray"
+                      autoCapitalize={"characters"}
+                      value={userData.apodo}
+                    ></TextInput>
+                  </View>
+                  <View
+                    style={{
+                      marginVertical: 10,
+                      paddingLeft: 10,
+                      paddingRight: 10,
+                    }}
+                  >
+                    <Text style={styles.text}>No. Poliza/ No. Afiliación</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="No. Poliza/ No. Afiliación"
+                      placeholderTextColor="gray"
+                      autoCapitalize={"characters"}
+                      value={userData.apodo}
+                    ></TextInput>
+                  </View>
+                </View>
+              ) : (
+                <View></View>
+              )}
             </View>
             {/* boton para subir información */}
             <View style={{ marginTop: 30 }}>
-              <Button title="Subir Información" color={"#F15A24"}></Button>
+              <Button
+                title="Subir Información"
+                color={"#F15A24"}
+                onPress={editarCambios}
+              ></Button>
             </View>
           </View>
         </View>
