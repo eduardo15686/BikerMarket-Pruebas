@@ -17,7 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseAuth from "../../credentials";
 import { StatusBar } from "expo-status-bar";
-import { collection, setDoc, doc, getDoc, updateDoc, getDocs, query, onSnapshot } from "firebase/firestore";
+import { collection, setDoc, doc, getDoc, updateDoc, getDocs, query, onSnapshot, where } from "firebase/firestore";
 import { FIREBASE_DB } from "../../credentials";
 import { ref, onValue } from "firebase/storage";
 
@@ -31,7 +31,7 @@ export default function Rally() {
   const [todoData, setTodoData] = useState([]);
   useEffect(() => {
     const getEvent = () => {
-      const q = query(collection(FIREBASE_DB, "events"));
+      const q = query(collection(FIREBASE_DB, "events"), where("status", "==", "Activo") );
 
       const sendData = onSnapshot(q, (querySnapshot) => {
         const arrayEmpty = [];

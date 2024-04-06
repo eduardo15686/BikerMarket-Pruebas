@@ -13,34 +13,38 @@ import {
 import { React, useState } from "react";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
+import RNPickerSelect from "react-native-picker-select";
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import { getStorage } from "firebase/storage";
 import firebaseAuth from "../../../credentials";
 import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
+
 import { getAuth } from "firebase/auth";
 const auth = getAuth(firebaseAuth);
 const storage = getStorage(FIREBASE_APP);
 
 
 export default function AñadirEvento(props) {
-  
-  const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
-  const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
-  const [date, setDate] = useState(new Date()); //useState para tomar fecha y mostrarla: datePicker inicio
-  const [endDate, setEndDate] = useState(new Date()); //useState para tomar fecha y mostrarla: datePicker fin
-
   const [fotoEvento, setFotoEvento] = useState(null);
-  const [uploading, setUploading] = useState(false);
-
   const [nameEvent, setNameEvent] = useState("");
   const [descEvent, setDescEvent] = useState("");
+
+  const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
+  const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
+
+  const [date, setDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
   const [vali, setVali] = useState("unknown");
   const [certi, setCerti] = useState("unknown");
 
+
   const [userID, setUserID] = useState(auth.currentUser.uid);
 
+  
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -56,7 +60,7 @@ export default function AñadirEvento(props) {
     }
   };
 
- 
+
 
   const showPicker = () => {
     setIsPickerShow(true);
@@ -78,6 +82,7 @@ export default function AñadirEvento(props) {
       setIsPickerShowEnd(false);
     }
   };
+
 
   const status = "Activo";
 
@@ -118,7 +123,7 @@ export default function AñadirEvento(props) {
                 alignItems: 'center'
               }}>
               <TextInput
-                onChangeText={(text) => setNameEvent(text)}
+                onChangeText={(text) => setNameEvent({ text })}
                 style={styles.inputEventosDesc} />
             </View>
           </View>
@@ -136,7 +141,7 @@ export default function AñadirEvento(props) {
                 alignItems: 'center'
               }}>
               <TextInput
-                onChangeText={(text) => setDescEvent(text)}
+                onChangeText={(text) => setDescEvent({  text })}
                 style={styles.inputEventosDesc}
                 maxLength={200}
                 multiline={true} />
@@ -148,8 +153,8 @@ export default function AñadirEvento(props) {
         <View style={styles.containerFechaEvento}>
           {/* Fecha de inicio */}
           <View style={{ fontSize: 20, color: "#FE895C" }}>
-            <Text style={{ fontSize: 15, color: "grey" }}>
-              <Text style={{ fontWeight: "bold" }}>Fecha de inicio:</Text>
+            <Text style={{ fontSize: 15, color: "grey", textAlign: 'center' }}>
+              <Text style={{ fontWeight: "bold" }}>Fecha de inicio: </Text>
               {date.toUTCString()}
             </Text>
           </View>
@@ -157,7 +162,7 @@ export default function AñadirEvento(props) {
             <View style={{ padding: 15 }}>
               <Button
 
-                title="Seleccionar fecha de inicio"
+                title="Seleccionar fecha de inicio del evento"
                 color="#FE895C"
                 onPress={showPicker}
               />
@@ -165,6 +170,8 @@ export default function AñadirEvento(props) {
           )}
           {isPickerShow && (
             <DateTimePicker
+              maximumDate={new Date(2030, 10, 20)}
+              minimumDate={new Date(2024, 0, 1)}
               value={new Date()}
               mode={"date"}
               display={Platform.OS === "ios" ? "spinner" : "spinner"}
@@ -178,15 +185,15 @@ export default function AñadirEvento(props) {
 
           {/* Fecha de finalizacion */}
           <View style={{ fontSize: 20, color: "#FE895C" }}>
-            <Text style={{ fontSize: 15, color: "grey" }}>
-              <Text style={{ fontWeight: "bold" }}>Fecha en que termina:</Text>
+            <Text style={{ fontSize: 15, color: "grey", textAlign: 'center' }}>
+              <Text style={{ fontWeight: "bold" }}>Fecha en que termina: </Text>
               {endDate.toUTCString()}
             </Text>
           </View>
           {!isPickerShowEnd && (
             <View style={{ padding: 15 }}>
               <Button
-                title="Seleccionar fecha en que termina"
+                title="Seleccionar fecha en que termina el evento"
                 color="#FE895C"
                 onPress={showPickerEnd}
               />
@@ -194,6 +201,8 @@ export default function AñadirEvento(props) {
           )}
           {isPickerShowEnd && (
             <DateTimePicker
+              maximumDate={new Date(2030, 10, 20)}
+              minimumDate={new Date(2024, 0, 1)}
               value={new Date()}
               mode={"date"}
               display={Platform.OS === "ios" ? "spinner" : "spinner"}
@@ -206,8 +215,8 @@ export default function AñadirEvento(props) {
           )}
         </View>
 
-        {/* Validaciones */}
-
+        {/*  validaciones */}
+        
         <View
           style={styles.containerValidaciones}>
           <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
@@ -256,6 +265,7 @@ export default function AñadirEvento(props) {
           </View>
         </View>
 
+
         <Funcionalidades
           title={"Registrar evento"}
           status={status}
@@ -294,13 +304,13 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
   },
   fotoEvento: {
-    width: 150, 
-    height: 150, 
+    width: 150,
+    height: 150,
     borderRadius: 100,
     resizeMode: 'cover',
   },
   containerFoto: {
-    alignContent: "center", 
+    alignContent: "center",
     alignItems: "center"
   },
   containerEventoInfo: {
@@ -377,3 +387,43 @@ const styles = StyleSheet.create({
     borderBottomColor: "#FAC3AE",
   },
 });
+
+{/* 
+<View>
+          <View
+            style={styles.containerValidaciones}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
+              Verifique su validacion {'\n'}
+              Por favor seleccione "SI" o "NO"
+            </Text>
+            <RNPickerSelect
+              value={vali}
+              style={styles.dropDown}
+              onValueChange={(value, index) =>
+                setVali({  value })}
+              items={[
+                { label: 'SI', value: 'sivali' },
+                { label: 'NO', value: 'novali' },
+              ]}
+            />
+
+          </View>
+
+          <View
+            style={styles.containerValidaciones}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
+              Verifique su certificacion {'\n'}
+              Por favor seleccione "SI" o "NO"
+            </Text>
+            <RNPickerSelect
+              value={certi}
+              style={styles.dropDown}
+              onValueChange={(value, index) =>
+                setCerti({  value })}
+              items={[
+                { label: 'SI', value: 'sicerti' },
+                { label: 'NO', value: 'nocerti' },
+              ]}
+            />
+          </View>
+        </View>*/}

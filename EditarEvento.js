@@ -11,15 +11,9 @@ import {
 } from "react-native";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import RNPickerSelect from "react-native-picker-select";
-
-import { FIREBASE_APP } from "./credentials";
-import { firebaseAuth } from "./credentials";
 import Funcionalidades from "././components/Funcionalidades";
-
-
 
 
 export default function EditarEvento({ route }) {
@@ -28,8 +22,6 @@ export default function EditarEvento({ route }) {
     image: route.params.data.datos.eventPhoto,
     name: route.params.data.datos.eventName,
     desc: route.params.data.datos.eventDesc,
-    date: new Date(route.params.data.datos.dateInit),
-    endDate: new Date(route.params.data.datos.dateEnd),
     vali: route.params.data.datos.validation,
     certi: route.params.data.datos.certification
   })
@@ -37,6 +29,9 @@ export default function EditarEvento({ route }) {
   
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
+
+  const [date, setDate] = useState(new Date(route.params.data.datos.dateInit)); 
+  const [endDate, setEndDate] = useState(new Date(route.params.data.datos.dateEnd));
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -145,7 +140,7 @@ export default function EditarEvento({ route }) {
           <View style={{ fontSize: 20, color: "#FE895C" }}>
             <Text style={{ fontSize: 15, color: "grey" }}>
               <Text style={{ fontWeight: "bold" }}>Fecha de inicio:</Text>
-              {info.date.toUTCString()}
+              {date.toUTCString()}
             </Text>
           </View>
           {!isPickerShow && (
@@ -161,6 +156,8 @@ export default function EditarEvento({ route }) {
           {isPickerShow && (
             <DateTimePicker
               value={new Date()}
+              maximumDate={new Date(2030, 10, 20)}
+              minimumDate={new Date(2024, 0, 1)}
               mode={"date"}
               display={Platform.OS === "ios" ? "spinner" : "spinner"}
               negative={{ label: "Cancel", textColor: "red" }}
@@ -175,7 +172,7 @@ export default function EditarEvento({ route }) {
           <View style={{ fontSize: 20, color: "#FE895C" }}>
             <Text style={{ fontSize: 15, color: "grey" }}>
               <Text style={{ fontWeight: "bold" }}>Fecha en que termina:</Text>
-              {info.endDate.toUTCString()}
+              {endDate.toUTCString()}
             </Text>
           </View>
           {!isPickerShowEnd && (
@@ -190,6 +187,8 @@ export default function EditarEvento({ route }) {
           {isPickerShowEnd && (
             <DateTimePicker
               value={new Date()}
+              maximumDate={new Date(2030, 10, 20)}
+              minimumDate={new Date(2024, 0, 1)}
               mode={"date"}
               display={Platform.OS === "ios" ? "spinner" : "spinner"}
               negative={{ label: "Cancel", textColor: "red" }}
@@ -247,14 +246,16 @@ export default function EditarEvento({ route }) {
           editPhoto={info.image}
           editName={info.name}
           editDesc={info.desc}
-          editInit={info.date.toUTCString()}
-          editEnd={info.endDate.toUTCString()}
+          editInit={date.toUTCString()}
+          editEnd={endDate.toUTCString()}
           editVali={info.vali}
           editCerti={info.certi}
           callFunction={"handlerEditEvent"}
         />
         <Funcionalidades
+          UID={info.setID}
           title={"Eliminar Evento"}
+          callFunction={"handlerDeleteEvent"}
         />
       </View>
     </ScrollView>

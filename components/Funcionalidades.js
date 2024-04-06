@@ -89,6 +89,9 @@ export default function funcionalidades(props) {
             if (props.callFunction == "handlerEditEvent") {
               handlerEditEvent();
             }
+            if(props.callFunction == "handlerDeleteEvent"){
+              handlerDeleteEvent();
+            }
           }}
           style={{ alignItems: "center", justifyContent: "center" }}
         >
@@ -104,7 +107,7 @@ export default function funcionalidades(props) {
   async function handleRegisterEvent() {
 
     const storage = getStorage(FIREBASE_APP);
-    if (props.eventName === "" || props.eventDesc === "") {
+    if (props.eventName == "" || props.eventDesc == "") {
       Alert.alert("Error", "Por favor, llene todos los cambios");
       return;
     }
@@ -163,36 +166,36 @@ export default function funcionalidades(props) {
       const imagenURL = getDoc(dataEdit);
 
       const pruebas = (await imagenURL).data().eventPhoto;
-      
+
       if (pruebas != props.editPhoto) {
         const { uri } = await FileSystem.getInfoAsync(props.editPhoto);
-      const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = () => {
-          resolve(xhr.response);
-        };
-        xhr.onerror = (e) => {
-          reject(new TypeError('Network request failed'));
-        };
-        xhr.responseType = 'blob';
-        xhr.open('GET', uri, true);
-        xhr.send(null);
-      });
-      const filename = props.editPhoto.substring(props.editPhoto.lastIndexOf('/') + 1);
-      const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-      await uploadBytes(storageRef, blob).then((snapshot) => { });
-      const urlEdit = await getDownloadURL(storageRef);
-      await updateDoc(dataEdit, {
-        eventPhoto: urlEdit,
-        eventName: props.editName,
-        eventDesc: props.editDesc,
-        dateInit: props.editInit,
-        dateEnd: props.editEnd,
-        validation: props.editVali,
-        certification: props.editCerti
-      })
-      console.log('editamos');
-      } else{
+        const blob = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = () => {
+            resolve(xhr.response);
+          };
+          xhr.onerror = (e) => {
+            reject(new TypeError('Network request failed'));
+          };
+          xhr.responseType = 'blob';
+          xhr.open('GET', uri, true);
+          xhr.send(null);
+        });
+        const filename = props.editPhoto.substring(props.editPhoto.lastIndexOf('/') + 1);
+        const storageRef = ref(storage, "foto-evento/" + `${filename}`);
+        await uploadBytes(storageRef, blob).then((snapshot) => { });
+        const urlEdit = await getDownloadURL(storageRef);
+        await updateDoc(dataEdit, {
+          eventPhoto: urlEdit,
+          eventName: props.editName,
+          eventDesc: props.editDesc,
+          dateInit: props.editInit,
+          dateEnd: props.editEnd,
+          validation: props.editVali,
+          certification: props.editCerti
+        })
+        Alert.alert("Evento editado!");
+      } else {
         console.log('no se edito la foto');
         await updateDoc(dataEdit, {
           eventName: props.editName,
@@ -202,13 +205,27 @@ export default function funcionalidades(props) {
           validation: props.editVali,
           certification: props.editCerti
         })
-        // Alert.alert("Evento sin foto editada!")
+        Alert.alert("¡Evento editado!");
       }
-      
+
     } catch (error) {
       console.log("Desde editar", error);
       console.log(props.image);
     }
   }
 
+  ///Eliminar evento
+  async function handlerDeleteEvent() {
+    try {
+      const editStatus = doc(FIREBASE_DB, "events", props.UID);
+
+      await updateDoc(editStatus, {
+        status: "Inactivo"
+      });
+      Alert.alert("Eliminado con exito")
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
 }
