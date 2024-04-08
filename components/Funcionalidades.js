@@ -10,11 +10,16 @@ import {
   signOut,
 } from "firebase/auth";
 import { FIREBASE_DB } from "../credentials";
-import { collection, setDoc, doc, addDoc, updateDoc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  setDoc,
+  doc,
+  addDoc,
+  updateDoc,
+  getDoc,
+} from "firebase/firestore";
 
-
-
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { FIREBASE_APP } from "../credentials";
 export default function funcionalidades(props) {
@@ -45,9 +50,19 @@ export default function funcionalidades(props) {
         ).then((userCredentials) => {
           const user = userCredentials.user;
           setDoc(doc(FIREBASE_DB, "users", `${userCredentials.user.uid}`), {
+            apodo: "",
+            celular: "",
+            estado: "",
+            fecha_nacimiento: "",
+            municipio: "",
+            seguroMedico: "",
+            tipoSangre: "",
+            institucionMedica: "",
+            poliza: "",
             nombre: props.infoUser.nombre,
             rol: "usuario",
             foto_url: "",
+            estatus: "Activo",
           });
           console.log(user);
         });
@@ -84,12 +99,11 @@ export default function funcionalidades(props) {
             }
             if (props.callFunction == "handleRegisterEvent") {
               handleRegisterEvent();
-
             }
             if (props.callFunction == "handlerEditEvent") {
               handlerEditEvent();
             }
-            if(props.callFunction == "handlerDeleteEvent"){
+            if (props.callFunction == "handlerDeleteEvent") {
               handlerDeleteEvent();
             }
           }}
@@ -101,11 +115,8 @@ export default function funcionalidades(props) {
     </View>
   );
 
-
-
-  ///Registrar evento  
+  ///Registrar evento
   async function handleRegisterEvent() {
-
     const storage = getStorage(FIREBASE_APP);
     if (props.eventName == "" || props.eventDesc == "") {
       Alert.alert("Error", "Por favor, llene todos los cambios");
@@ -114,7 +125,6 @@ export default function funcionalidades(props) {
     if (props.validation === "unknown" || props.certification === "unknown") {
       Alert.alert("No olvide seleccionar la certificacion o validacion");
       return;
-
     }
     try {
       const { uri } = await FileSystem.getInfoAsync(props.eventPhoto);
@@ -124,15 +134,17 @@ export default function funcionalidades(props) {
           resolve(xhr.response);
         };
         xhr.onerror = (e) => {
-          reject(new TypeError('Network request failed'));
+          reject(new TypeError("Network request failed"));
         };
-        xhr.responseType = 'blob';
-        xhr.open('GET', uri, true);
+        xhr.responseType = "blob";
+        xhr.open("GET", uri, true);
         xhr.send(null);
       });
-      const filename = props.eventPhoto.substring(props.eventPhoto.lastIndexOf('/') + 1);
+      const filename = props.eventPhoto.substring(
+        props.eventPhoto.lastIndexOf("/") + 1
+      );
       const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-      await uploadBytes(storageRef, blob).then((snapshot) => { });
+      await uploadBytes(storageRef, blob).then((snapshot) => {});
       const url = await getDownloadURL(storageRef);
 
       const setData = await addDoc(collection(FIREBASE_DB, "events"), {
@@ -144,17 +156,15 @@ export default function funcionalidades(props) {
         dateInit: props.dateInit,
         dateEnd: props.dateEnd,
         validation: props.validation,
-        certification: props.certification
-      }
-      )
-      Alert.alert("¡Evento registrado!")
+        certification: props.certification,
+      });
+      Alert.alert("¡Evento registrado!");
     } catch (error) {
       console.log(error);
     }
   }
 
-
-  ///Editar evento 
+  ///Editar evento
   async function handlerEditEvent() {
     const storage = getStorage(FIREBASE_APP);
     if (props.editName === "" || props.editDesc === "") {
@@ -175,15 +185,17 @@ export default function funcionalidades(props) {
             resolve(xhr.response);
           };
           xhr.onerror = (e) => {
-            reject(new TypeError('Network request failed'));
+            reject(new TypeError("Network request failed"));
           };
-          xhr.responseType = 'blob';
-          xhr.open('GET', uri, true);
+          xhr.responseType = "blob";
+          xhr.open("GET", uri, true);
           xhr.send(null);
         });
-        const filename = props.editPhoto.substring(props.editPhoto.lastIndexOf('/') + 1);
+        const filename = props.editPhoto.substring(
+          props.editPhoto.lastIndexOf("/") + 1
+        );
         const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-        await uploadBytes(storageRef, blob).then((snapshot) => { });
+        await uploadBytes(storageRef, blob).then((snapshot) => {});
         const urlEdit = await getDownloadURL(storageRef);
         await updateDoc(dataEdit, {
           eventPhoto: urlEdit,
@@ -192,22 +204,21 @@ export default function funcionalidades(props) {
           dateInit: props.editInit,
           dateEnd: props.editEnd,
           validation: props.editVali,
-          certification: props.editCerti
-        })
+          certification: props.editCerti,
+        });
         Alert.alert("Evento editado!");
       } else {
-        console.log('no se edito la foto');
+        console.log("no se edito la foto");
         await updateDoc(dataEdit, {
           eventName: props.editName,
           eventDesc: props.editDesc,
           dateInit: props.editInit,
           dateEnd: props.editEnd,
           validation: props.editVali,
-          certification: props.editCerti
-        })
+          certification: props.editCerti,
+        });
         Alert.alert("¡Evento editado!");
       }
-
     } catch (error) {
       console.log("Desde editar", error);
       console.log(props.image);
@@ -220,12 +231,11 @@ export default function funcionalidades(props) {
       const editStatus = doc(FIREBASE_DB, "events", props.UID);
 
       await updateDoc(editStatus, {
-        status: "Inactivo"
+        status: "Inactivo",
       });
-      Alert.alert("Eliminado con exito")
+      Alert.alert("Eliminado con exito");
     } catch (error) {
       console.log(error);
     }
-
   }
 }
