@@ -69,79 +69,68 @@ export default function Rally() {
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const getDocument = async () => {
-          try {
-            const docRef = doc(FIREBASE_DB, "users", `${user.uid}`);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-              setUserData(docSnap.data());
-              navigation.setOptions({
-                headerRight: () => (
-                  <Pressable
-                    onPress={() =>
-                      navigate("Registro para Eventos", {
-                        user: user.uid,
-                      })
-                    }
-                  >
-                    {docSnap.data().foto_url == "" ? (
-                      <View
-                        style={{ alignContent: "center", alignItems: "center" }}
-                      >
-                        <Image
-                          style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 100,
-                            marginBottom: 7,
-                          }}
-                          source={require("../../assets/defaultProfile.webp")}
-                        />
-                      </View>
-                    ) : (
-                      <View
-                        style={{ alignContent: "center", alignItems: "center" }}
-                      >
-                        <Image
-                          style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 100,
-                            marginBottom: 7,
-                          }}
-                          source={{
-                            uri: docSnap.data().foto_url,
-                          }}
-                        />
-                      </View>
-                    )}
-                    {/* <Image
-                      source={{
-                        uri: docSnap.data().foto_url,
-                      }}
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 100,
-                        marginBottom: 7,
-                      }}
-                    /> */}
-                  </Pressable>
-                ),
-              });
-            } else {
-              setUserData(null);
-              console.log("No document!");
-            }
-          } catch (e) {
-            console.log(e);
-          }
-        };
-        getDocument();
-      }
-    });
+    // onAuthStateChanged(auth, (user) => {
+    //   if (user) {
+    //     const getDocument = async () => {
+    //       try {
+    //         const docRef = doc(FIREBASE_DB, "users", `${user.uid}`);
+    //         const docSnap = await getDoc(docRef);
+    //         if (docSnap.exists()) {
+    //           setUserData(docSnap.data());
+    //           navigation.setOptions({
+    //             headerRight: () => (
+    //               <Pressable
+    //                 onPress={() =>
+    //                   navigate("Registro para Eventos", {
+    //                     user: user.uid,
+    //                   })
+    //                 }
+    //               >
+    //                 {docSnap.data().foto_url == "" ? (
+    //                   <View
+    //                     style={{ alignContent: "center", alignItems: "center" }}
+    //                   >
+    //                     <Image
+    //                       style={{
+    //                         width: 40,
+    //                         height: 40,
+    //                         borderRadius: 100,
+    //                         marginBottom: 7,
+    //                       }}
+    //                       source={require("../../assets/defaultProfile.webp")}
+    //                     />
+    //                   </View>
+    //                 ) : (
+    //                   <View
+    //                     style={{ alignContent: "center", alignItems: "center" }}
+    //                   >
+    //                     <Image
+    //                       style={{
+    //                         width: 40,
+    //                         height: 40,
+    //                         borderRadius: 100,
+    //                         marginBottom: 7,
+    //                       }}
+    //                       source={{
+    //                         uri: docSnap.data().foto_url,
+    //                       }}
+    //                     />
+    //                   </View>
+    //                 )}
+    //               </Pressable>
+    //             ),
+    //           });
+    //         } else {
+    //           setUserData(null);
+    //           console.log("No document!");
+    //         }
+    //       } catch (e) {
+    //         console.log(e);
+    //       }
+    //     };
+    //     getDocument();
+    //   }
+    // });
   }, []);
 
   const theme = useColorScheme();

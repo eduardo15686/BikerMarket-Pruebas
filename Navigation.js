@@ -2,11 +2,12 @@ import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
+  useNavigation,
 } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { FontAwesome } from "@expo/vector-icons";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import Rally from "./screens/tabScreens/Rally";
 import Bandeja from "./screens/tabScreens/Bandeja";
 import Configuracion from "./screens/tabScreens/Configuracion";
@@ -14,8 +15,16 @@ import Market from "./screens/tabScreens/Market";
 import Detalles from "./screens/tabScreens/rallyStack/Detalles";
 import Login from "./screens/principal/Login";
 import Register from "./screens/principal/Register";
-import { useColorScheme } from "react-native";
+import {
+  Button,
+  useColorScheme,
+  Pressable,
+  Text,
+  View,
+  Image,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { doc, getDoc } from "firebase/firestore";
 import firebaseAuth from "./credentials";
 import {
   getAuth,
@@ -28,10 +37,24 @@ import AñadirEvento from "./screens/tabScreens/rallyStack/AñadirEvento";
 import EventRegister from "./screens/draweGroup/EventRegister";
 import RallyAdmin from "./screens/tabScreens/RallyAdmin";
 import EditarEvento from "./EditarEvento";
+import Registrado from "./screens/draweGroup/Registrado";
+import { FIREBASE_DB } from "./credentials";
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const auth = getAuth(firebaseAuth);
+
+const TopTap = createMaterialTopTabNavigator();
+
+function TopTabGroup() {
+  return (
+    <TopTap.Navigator>
+      <TopTap.Screen name="todos los eventos" component={Rally} />
+      <TopTap.Screen name="eventos registrado" component={Registrado} />
+    </TopTap.Navigator>
+  );
+}
 
 function PaginaPrincipal() {
   return (
@@ -80,11 +103,62 @@ function AdminGroup() {
 
 //Usuario
 function StackGroup() {
+  const { navigate } = useNavigation();
+  const [isLogged, setIsLogged] = useState(auth.currentUser.uid);
+  const docSnap = "";
+
+  const getDocument = async () => {
+    const docRef = doc(FIREBASE_DB, "users", `${isLogged}`);
+    this.docSnap = await getDoc(docRef);
+  };
+  getDocument();
   return (
     <Stack.Navigator
       screenOptions={{ headerStyle: { backgroundColor: "#FAC3AE" } }}
     >
-      <Stack.Screen name="Eventos Activos" component={Rally} />
+      <Stack.Screen
+        name="Eventos Activos"
+        component={TopTabGroup}
+        options={{
+          headerRight: () => (
+            <Pressable
+              onPress={() =>
+                navigate("Registro para Eventos", {
+                  user: "WM62dJHWcBR1ZyJ0IflYJb3htri1",
+                })
+              }
+            >
+              {this.docSnap.data().foto_url == "" ? (
+                <View style={{ alignContent: "center", alignItems: "center" }}>
+                  <Image
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 100,
+                      marginBottom: 7,
+                    }}
+                    source={require("./assets/defaultProfile.webp")}
+                  />
+                </View>
+              ) : (
+                <View style={{ alignContent: "center", alignItems: "center" }}>
+                  <Image
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 100,
+                      marginBottom: 7,
+                    }}
+                    source={{
+                      uri: this.docSnap.data().foto_url,
+                    }}
+                  />
+                </View>
+              )}
+            </Pressable>
+          ),
+        }}
+      />
       <Stack.Screen name="Detalles" component={Detalles} />
       <Stack.Screen
         name="Añadir Evento"
@@ -170,7 +244,6 @@ function TabGroup() {
 export default function Navigation() {
   const currentTheme = useColorScheme();
   const [isLogged, setIsLogged] = useState(null);
-  
   useEffect(() => {
     if (auth) {
       const unsubscribe = onAuthStateChanged(auth, (authUser) => {
