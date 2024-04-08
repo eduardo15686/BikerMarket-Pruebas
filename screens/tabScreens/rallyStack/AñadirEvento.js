@@ -101,7 +101,7 @@ export default function AñadirEvento(props) {
           {/* Agregar nombre del evento */}
 
           <View style={styles.containerEventoInfo}>
-            <Text style={{  fontSize: 16, color: "#f15a24" }}>
+            <Text style={{ fontSize: 16, color: "#f15a24" }}>
               Nombre del evento
             </Text>
             <View
@@ -120,7 +120,7 @@ export default function AñadirEvento(props) {
           {/* Agregar descripcion del evento */}
 
           <View style={styles.containerEventoInfo}>
-            <Text style={{  fontSize: 16, color: "#f15a24" }}>
+            <Text style={{ fontSize: 16, color: "#f15a24" }}>
               Descripcion del evento
             </Text>
             <View
@@ -143,7 +143,9 @@ export default function AñadirEvento(props) {
         <View style={styles.containerFechaEvento}>
           {/* Fecha de inicio */}
           <View style={{ fontSize: 20, color: "#FE895C" }}>
-            <Text style={{ fontSize: 14, color: "#f15a24", textAlign: "center" }}>
+            <Text
+              style={{ fontSize: 14, color: "#f15a24", textAlign: "center" }}
+            >
               <Text style={{ fontWeight: "bold" }}>Fecha de inicio: </Text>
               {date.toUTCString()}
             </Text>
@@ -174,7 +176,9 @@ export default function AñadirEvento(props) {
 
           {/* Fecha de finalizacion */}
           <View style={{ fontSize: 20, color: "#FE895C" }}>
-            <Text style={{ fontSize: 14, color: "#f15a24", textAlign: "center" }}>
+            <Text
+              style={{ fontSize: 14, color: "#f15a24", textAlign: "center" }}
+            >
               <Text style={{ fontWeight: "bold" }}>Fecha en que termina: </Text>
               {endDate.toUTCString()}
             </Text>
@@ -209,7 +213,6 @@ export default function AñadirEvento(props) {
         <View style={styles.containerValidaciones}>
           <Text
             style={{
-              
               fontSize: 16,
               color: "#f15a24",
               textAlign: "center",
@@ -240,7 +243,6 @@ export default function AñadirEvento(props) {
         <View style={styles.containerValidaciones}>
           <Text
             style={{
-              
               fontSize: 16,
               color: "#f15a24",
               textAlign: "center",
@@ -268,7 +270,6 @@ export default function AñadirEvento(props) {
           </View>
         </View>
 
-            
         <Funcionalidades
           title={"Registrar evento"}
           eventPhoto={fotoEvento}
@@ -326,11 +327,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 20,
     color: "#f15a24",
-    
   },
   textEvento: {
     fontSize: 16,
-    
+
     color: "#f15a24",
     marginTop: 10,
     marginBottom: 10,

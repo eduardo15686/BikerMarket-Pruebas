@@ -103,15 +103,22 @@ function AdminGroup() {
 
 //Usuario
 function StackGroup() {
+  const [fotoPerfil, setFotoPerfil] = useState("");
   const { navigate } = useNavigation();
   const [isLogged, setIsLogged] = useState(auth.currentUser.uid);
-  const docSnap = "";
 
   const getDocument = async () => {
     const docRef = doc(FIREBASE_DB, "users", `${isLogged}`);
-    this.docSnap = await getDoc(docRef);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setFotoPerfil(docSnap.data().foto_url);
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
   };
   getDocument();
+
   return (
     <Stack.Navigator
       screenOptions={{ headerStyle: { backgroundColor: "#FAC3AE" } }}
@@ -124,11 +131,11 @@ function StackGroup() {
             <Pressable
               onPress={() =>
                 navigate("Registro para Eventos", {
-                  user: "WM62dJHWcBR1ZyJ0IflYJb3htri1",
+                  user: isLogged,
                 })
               }
             >
-              {this.docSnap.data().foto_url == "" ? (
+              {fotoPerfil == "" ? (
                 <View style={{ alignContent: "center", alignItems: "center" }}>
                   <Image
                     style={{
@@ -150,7 +157,7 @@ function StackGroup() {
                       marginBottom: 7,
                     }}
                     source={{
-                      uri: this.docSnap.data().foto_url,
+                      uri: fotoPerfil,
                     }}
                   />
                 </View>
