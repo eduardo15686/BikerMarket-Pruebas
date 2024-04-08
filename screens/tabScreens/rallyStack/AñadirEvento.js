@@ -12,10 +12,10 @@ import {
 } from "react-native";
 import { React, useState } from "react";
 
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
-import { Picker } from '@react-native-picker/picker';
-import * as ImagePicker from 'expo-image-picker';
+import { Picker } from "@react-native-picker/picker";
+import * as ImagePicker from "expo-image-picker";
 
 import { getStorage } from "firebase/storage";
 import firebaseAuth from "../../../credentials";
@@ -25,7 +25,6 @@ import Funcionalidades from "../../../components/Funcionalidades";
 import { getAuth } from "firebase/auth";
 const auth = getAuth(firebaseAuth);
 const storage = getStorage(FIREBASE_APP);
-
 
 export default function AñadirEvento(props) {
   const [fotoEvento, setFotoEvento] = useState(null);
@@ -41,10 +40,7 @@ export default function AñadirEvento(props) {
   const [vali, setVali] = useState("unknown");
   const [certi, setCerti] = useState("unknown");
 
-
   const [userID, setUserID] = useState(auth.currentUser.uid);
-
-  
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -59,8 +55,6 @@ export default function AñadirEvento(props) {
       setFotoEvento(result.assets[0].uri);
     }
   };
-
-
 
   const showPicker = () => {
     setIsPickerShow(true);
@@ -83,9 +77,6 @@ export default function AñadirEvento(props) {
     }
   };
 
-
-  const status = "Activo";
-
   return (
     <ScrollView>
       <View style={styles.containerPrincipal}>
@@ -93,58 +84,57 @@ export default function AñadirEvento(props) {
 
         {/* Agregar foto del evento  */}
         <View style={styles.containerFoto}>
-          <TouchableOpacity
-            style={styles.buttonFoto}
-            onPress={pickImage}>
+          <TouchableOpacity style={styles.buttonFoto} onPress={pickImage}>
             {!fotoEvento && <Text>Añadir evento</Text>}
 
-            {fotoEvento &&
-              <><Image source={{ uri: fotoEvento }} style={styles.fotoEvento} />
-                <View style={styles.containerFoto}>
-                </View>
+            {fotoEvento && (
+              <>
+                <Image source={{ uri: fotoEvento }} style={styles.fotoEvento} />
+                <View style={styles.containerFoto}></View>
               </>
-            }
+            )}
           </TouchableOpacity>
-
         </View>
 
         {/* Registrar evento */}
         <View>
           {/* Agregar nombre del evento */}
 
-          <View
-            style={styles.containerEventoInfo}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
+          <View style={styles.containerEventoInfo}>
+            <Text style={{ fontWeight: "bold", fontSize: 16, color: "grey" }}>
               Nombre del evento
             </Text>
             <View
               style={{
-                flexDirection: 'row',
-                alignItems: 'center'
-              }}>
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
               <TextInput
-                onChangeText={(text) => setNameEvent({ text })}
-                style={styles.inputEventosDesc} />
+                onChangeText={(text) => setNameEvent(text)}
+                style={styles.inputEventosDesc}
+              />
             </View>
           </View>
 
           {/* Agregar descripcion del evento */}
 
-          <View
-            style={styles.containerEventoInfo}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey' }}>
+          <View style={styles.containerEventoInfo}>
+            <Text style={{ fontWeight: "bold", fontSize: 16, color: "grey" }}>
               Descripcion del evento
             </Text>
             <View
               style={{
-                flexDirection: 'row',
-                alignItems: 'center'
-              }}>
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
               <TextInput
-                onChangeText={(text) => setDescEvent({  text })}
+                onChangeText={(text) => setDescEvent(text)}
                 style={styles.inputEventosDesc}
                 maxLength={200}
-                multiline={true} />
+                multiline={true}
+              />
             </View>
           </View>
         </View>
@@ -153,7 +143,7 @@ export default function AñadirEvento(props) {
         <View style={styles.containerFechaEvento}>
           {/* Fecha de inicio */}
           <View style={{ fontSize: 20, color: "#FE895C" }}>
-            <Text style={{ fontSize: 15, color: "grey", textAlign: 'center' }}>
+            <Text style={{ fontSize: 15, color: "grey", textAlign: "center" }}>
               <Text style={{ fontWeight: "bold" }}>Fecha de inicio: </Text>
               {date.toUTCString()}
             </Text>
@@ -161,7 +151,6 @@ export default function AñadirEvento(props) {
           {!isPickerShow && (
             <View style={{ padding: 15 }}>
               <Button
-
                 title="Seleccionar fecha de inicio del evento"
                 color="#FE895C"
                 onPress={showPicker}
@@ -185,7 +174,7 @@ export default function AñadirEvento(props) {
 
           {/* Fecha de finalizacion */}
           <View style={{ fontSize: 20, color: "#FE895C" }}>
-            <Text style={{ fontSize: 15, color: "grey", textAlign: 'center' }}>
+            <Text style={{ fontSize: 15, color: "grey", textAlign: "center" }}>
               <Text style={{ fontWeight: "bold" }}>Fecha en que termina: </Text>
               {endDate.toUTCString()}
             </Text>
@@ -216,24 +205,31 @@ export default function AñadirEvento(props) {
         </View>
 
         {/*  validaciones */}
-        
-        <View
-          style={styles.containerValidaciones}>
-          <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
-            ¿Validacion de evidencias? {'\n'}
+
+        <View style={styles.containerValidaciones}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 16,
+              color: "grey",
+              textAlign: "center",
+            }}
+          >
+            ¿Validacion de evidencias? {"\n"}
             Por favor selecciona "SI" o "NO"
           </Text>
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}>
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
             <Picker
               mode="dropdown"
               selectedValue={vali}
-              onValueChange={(value, index) =>
-                setVali(value)}
-              style={styles.dropDown} >
+              onValueChange={(value, index) => setVali(value)}
+              style={styles.dropDown}
+            >
               <Picker.Item label="Abrir" value="unknown" />
               <Picker.Item label="SI" value="sivali" />
               <Picker.Item label="NO " value="novali" />
@@ -241,23 +237,30 @@ export default function AñadirEvento(props) {
           </View>
         </View>
 
-        <View
-          style={styles.containerValidaciones}>
-          <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
-            ¿Entrega de certificados? {'\n'}
+        <View style={styles.containerValidaciones}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 16,
+              color: "grey",
+              textAlign: "center",
+            }}
+          >
+            ¿Entrega de certificados? {"\n"}
             Por favor selecciona "SI" o "NO"
           </Text>
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}>
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
             <Picker
               mode="dropdown"
               selectedValue={certi}
-              onValueChange={(value, index) =>
-                setCerti(value)}
-              style={styles.dropDown} >
+              onValueChange={(value, index) => setCerti(value)}
+              style={styles.dropDown}
+            >
               <Picker.Item label="Abrir" value="unknown" />
               <Picker.Item label="SI" value="sicerti" />
               <Picker.Item label="NO " value="nocerti" />
@@ -265,10 +268,8 @@ export default function AñadirEvento(props) {
           </View>
         </View>
 
-
         <Funcionalidades
           title={"Registrar evento"}
-          status={status}
           eventPhoto={fotoEvento}
           UID={userID}
           eventName={nameEvent}
@@ -287,39 +288,38 @@ export default function AñadirEvento(props) {
 const styles = StyleSheet.create({
   containerPrincipal: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
   },
   buttonFoto: {
     width: 150,
     height: 150,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 5,
     margin: 5,
     borderWidth: 3,
     borderRadius: 75,
-    borderColor: 'grey',
+    borderColor: "grey",
   },
   fotoEvento: {
     width: 150,
     height: 150,
     borderRadius: 100,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   containerFoto: {
     alignContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   containerEventoInfo: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    alignItems: 'center'
+    alignSelf: "stretch",
+    justifyContent: "center",
+    alignItems: "center",
   },
   tituloEvento: {
     alignSelf: "center",
@@ -335,26 +335,26 @@ const styles = StyleSheet.create({
   },
   inputEventosDesc: {
     flex: -1,
-    width: '100%',
-    textAlignVertical: 'top',
+    width: "100%",
+    textAlignVertical: "top",
     margin: 5,
     padding: 5,
-    borderBottomColor: '#FAC3AE',
-    borderBottomWidth: 3.5
+    borderBottomColor: "#FAC3AE",
+    borderBottomWidth: 3.5,
   },
   containerFechaEvento: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
-    borderTopColor: '#FAC3AE',
-    borderTopWidth: 5
+    borderTopColor: "#FAC3AE",
+    borderTopWidth: 5,
   },
   containerValidaciones: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
-    borderTopColor: '#FAC3AE',
-    borderTopWidth: 5
+    borderTopColor: "#FAC3AE",
+    borderTopWidth: 5,
   },
   dropDown: {
     flex: 1,
@@ -388,7 +388,8 @@ const styles = StyleSheet.create({
   },
 });
 
-{/* 
+{
+  /* 
 <View>
           <View
             style={styles.containerValidaciones}>
@@ -426,4 +427,5 @@ const styles = StyleSheet.create({
               ]}
             />
           </View>
-        </View>*/}
+        </View>*/
+}
