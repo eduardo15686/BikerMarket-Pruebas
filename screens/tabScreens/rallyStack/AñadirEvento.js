@@ -268,6 +268,7 @@ export default function AñadirEvento(props) {
           </View>
         </View>
 
+            
         <Funcionalidades
           title={"Registrar evento"}
           eventPhoto={fotoEvento}

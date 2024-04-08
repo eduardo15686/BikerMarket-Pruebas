@@ -241,7 +241,7 @@ export default function EditarEvento({ route }) {
           </View>
         </View>
         <Funcionalidades
-          title={"Editar Evento"}
+          title={"Guardar"}
           UID={info.setID}
           editPhoto={info.image}
           editName={info.name}

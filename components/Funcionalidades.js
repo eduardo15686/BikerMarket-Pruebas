@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import firebaseAuth from "../credentials";
 import {
   getAuth,
@@ -20,10 +20,49 @@ import {
 } from "firebase/firestore";
 
 import * as FileSystem from "expo-file-system";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, getBlob } from "firebase/storage";
 import { FIREBASE_APP } from "../credentials";
 export default function funcionalidades(props) {
   const auth = getAuth(firebaseAuth);
+
+  const [hayFoto, setHayFoto] = useState(props.eventPhoto);
+
+  useEffect(() => {
+    if (!hayFoto) {
+      const newPhoto = "https://wallpaperaccess.com/full/4194340.png";
+      setHayFoto(newPhoto);
+      
+      console.log("No tiene foto, desde useEffect", hayFoto);
+    } else {
+       getUrl();
+    }
+   
+  }, [setHayFoto]);
+
+  const getUrl = async () => {
+    const { uri } = await FileSystem.getInfoAsync(setHayFoto);
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => {
+        resolve(xhr.response);
+      };
+      xhr.onerror = (e) => {
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+    const filename = setHayFoto.substring(
+      setHayFoto.lastIndexOf("/") + 1
+    );
+    const storageRef = ref(storage, "foto-evento/" + `${filename}`);
+    await uploadBytes(storageRef, blob).then((snapshot) => { });
+    const url = await getDownloadURL(storageRef);
+
+  }
+
+
 
   const handleSingIn = () => {
     signInWithEmailAndPassword(auth, props.email, props.password)
@@ -115,6 +154,9 @@ export default function funcionalidades(props) {
     </View>
   );
 
+
+
+
   ///Registrar evento
   async function handleRegisterEvent() {
     const storage = getStorage(FIREBASE_APP);
@@ -127,38 +169,53 @@ export default function funcionalidades(props) {
       return;
     }
     try {
-      const { uri } = await FileSystem.getInfoAsync(props.eventPhoto);
-      const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = () => {
-          resolve(xhr.response);
-        };
-        xhr.onerror = (e) => {
-          reject(new TypeError("Network request failed"));
-        };
-        xhr.responseType = "blob";
-        xhr.open("GET", uri, true);
-        xhr.send(null);
-      });
-      const filename = props.eventPhoto.substring(
-        props.eventPhoto.lastIndexOf("/") + 1
-      );
-      const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-      await uploadBytes(storageRef, blob).then((snapshot) => {});
-      const url = await getDownloadURL(storageRef);
+      if (!props.eventPhoto) {
+        await addDoc(collection(FIREBASE_DB, "events"), {
+          eventPhoto: hayFoto,
+          status: "Activo",
+          userID: props.UID,
+          eventName: props.eventName,
+          eventDesc: props.eventDesc,
+          dateInit: props.dateInit,
+          dateEnd: props.dateEnd,
+          validation: props.validation,
+          certification: props.certification,
+        });
+        Alert.alert("¡Evento registrado!");
+      } else {
+        const { uri } = await FileSystem.getInfoAsync(props.eventPhoto);
+        const blob = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = () => {
+            resolve(xhr.response);
+          };
+          xhr.onerror = (e) => {
+            reject(new TypeError("Network request failed"));
+          };
+          xhr.responseType = "blob";
+          xhr.open("GET", uri, true);
+          xhr.send(null);
+        });
+        const filename = props.eventPhoto.substring(
+          props.eventPhoto.lastIndexOf("/") + 1
+        );
+        const storageRef = ref(storage, "foto-evento/" + `${filename}`);
+        await uploadBytes(storageRef, blob).then((snapshot) => { });
+        const url = await getDownloadURL(storageRef);
 
-      await addDoc(collection(FIREBASE_DB, "events"), {
-        eventPhoto: url,
-        status: "Activo",
-        userID: props.UID,
-        eventName: props.eventName,
-        eventDesc: props.eventDesc,
-        dateInit: props.dateInit,
-        dateEnd: props.dateEnd,
-        validation: props.validation,
-        certification: props.certification,
-      });
-      Alert.alert("¡Evento registrado!");
+        await addDoc(collection(FIREBASE_DB, "events"), {
+          eventPhoto: url,
+          status: "Activo",
+          userID: props.UID,
+          eventName: props.eventName,
+          eventDesc: props.eventDesc,
+          dateInit: props.dateInit,
+          dateEnd: props.dateEnd,
+          validation: props.validation,
+          certification: props.certification,
+        });
+        Alert.alert("¡Evento registrado!");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -195,7 +252,7 @@ export default function funcionalidades(props) {
           props.editPhoto.lastIndexOf("/") + 1
         );
         const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-        await uploadBytes(storageRef, blob).then((snapshot) => {});
+        await uploadBytes(storageRef, blob).then((snapshot) => { });
         const urlEdit = await getDownloadURL(storageRef);
         await updateDoc(dataEdit, {
           eventPhoto: urlEdit,
