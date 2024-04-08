@@ -146,19 +146,18 @@ export default function funcionalidades(props) {
       const storageRef = ref(storage, "foto-evento/" + `${filename}`);
       await uploadBytes(storageRef, blob).then((snapshot) => {});
       const url = await getDownloadURL(storageRef);
-      console.log(props.eventName);
 
-      // const setData = await addDoc(collection(FIREBASE_DB, "events"), {
-      //   eventPhoto: url,
-      //   status: "Activo",
-      //   userID: props.UID,
-      //   eventName: props.eventName,
-      //   eventDesc: props.eventDesc,
-      //   dateInit: props.dateInit,
-      //   dateEnd: props.dateEnd,
-      //   validation: props.validation,
-      //   certification: props.certification,
-      // });
+      await addDoc(collection(FIREBASE_DB, "events"), {
+        eventPhoto: url,
+        status: "Activo",
+        userID: props.UID,
+        eventName: props.eventName,
+        eventDesc: props.eventDesc,
+        dateInit: props.dateInit,
+        dateEnd: props.dateEnd,
+        validation: props.validation,
+        certification: props.certification,
+      });
       Alert.alert("¡Evento registrado!");
     } catch (error) {
       console.log(error);
