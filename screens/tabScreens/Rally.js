@@ -112,7 +112,7 @@ export default function Rally() {
                             marginBottom: 7,
                           }}
                           source={{
-                            uri: userData.foto_url,
+                            uri: docSnap.data().foto_url,
                           }}
                         />
                         <Text style={{ fontWeight: "bold", marginTop: 15 }}>
