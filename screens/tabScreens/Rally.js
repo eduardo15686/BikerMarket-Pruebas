@@ -115,9 +115,6 @@ export default function Rally() {
                             uri: docSnap.data().foto_url,
                           }}
                         />
-                        <Text style={{ fontWeight: "bold", marginTop: 15 }}>
-                          Editar
-                        </Text>
                       </View>
                     )}
                     {/* <Image
