@@ -23,9 +23,10 @@ export default function RallyAdmin() {
     const getEvent = () => {
       const q = query(
         collection(FIREBASE_DB, "events"),
-        where("status", "==", "Activo")
+        where("status", "==", "Activo"),
+        where("userID", "==", auth.currentUser.uid)
       );
-
+      console.log(auth.currentUser.uid);
       onSnapshot(q, (querySnapshot) => {
         const arrayEmpty = [];
         querySnapshot.forEach((doc) => {
@@ -81,7 +82,9 @@ export default function RallyAdmin() {
               <View style={styles.userInfo}>
                 <Text style={styles.title}>{item.datos.eventName}</Text>
                 <Text style={styles.subTitle}>Descripcion:</Text>
-                <Text style={styles.userText}>{item.datos.eventDesc}</Text>
+                <Text style={styles.userText}>
+                  {item.datos.eventDesc.substring(0, 30)} ...
+                </Text>
                 <Text style={styles.subTitle}>
                   Fecha de inicio: {item.datos.dateInit}
                 </Text>

@@ -20,7 +20,13 @@ import {
 } from "firebase/firestore";
 
 import * as FileSystem from "expo-file-system";
-import { getStorage, ref, uploadBytes, getDownloadURL, getBlob } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  getBlob,
+} from "firebase/storage";
 import { FIREBASE_APP } from "../credentials";
 export default function funcionalidades(props) {
   const auth = getAuth(firebaseAuth);
@@ -31,12 +37,9 @@ export default function funcionalidades(props) {
     if (!hayFoto) {
       const newPhoto = "https://wallpaperaccess.com/full/4194340.png";
       setHayFoto(newPhoto);
-      
-      console.log("No tiene foto, desde useEffect", hayFoto);
     } else {
-       getUrl();
+      getUrl();
     }
-   
   }, [setHayFoto]);
 
   const getUrl = async () => {
@@ -53,16 +56,11 @@ export default function funcionalidades(props) {
       xhr.open("GET", uri, true);
       xhr.send(null);
     });
-    const filename = setHayFoto.substring(
-      setHayFoto.lastIndexOf("/") + 1
-    );
+    const filename = setHayFoto.substring(setHayFoto.lastIndexOf("/") + 1);
     const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-    await uploadBytes(storageRef, blob).then((snapshot) => { });
+    await uploadBytes(storageRef, blob).then((snapshot) => {});
     const url = await getDownloadURL(storageRef);
-
-  }
-
-
+  };
 
   const handleSingIn = () => {
     signInWithEmailAndPassword(auth, props.email, props.password)
@@ -154,9 +152,6 @@ export default function funcionalidades(props) {
     </View>
   );
 
-
-
-
   ///Registrar evento
   async function handleRegisterEvent() {
     const storage = getStorage(FIREBASE_APP);
@@ -200,7 +195,7 @@ export default function funcionalidades(props) {
           props.eventPhoto.lastIndexOf("/") + 1
         );
         const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-        await uploadBytes(storageRef, blob).then((snapshot) => { });
+        await uploadBytes(storageRef, blob).then((snapshot) => {});
         const url = await getDownloadURL(storageRef);
 
         await addDoc(collection(FIREBASE_DB, "events"), {
@@ -252,7 +247,7 @@ export default function funcionalidades(props) {
           props.editPhoto.lastIndexOf("/") + 1
         );
         const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-        await uploadBytes(storageRef, blob).then((snapshot) => { });
+        await uploadBytes(storageRef, blob).then((snapshot) => {});
         const urlEdit = await getDownloadURL(storageRef);
         await updateDoc(dataEdit, {
           eventPhoto: urlEdit,
