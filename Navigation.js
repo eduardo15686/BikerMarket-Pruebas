@@ -83,13 +83,14 @@ function AdminGroup() {
     <Stack.Navigator
       screenOptions={{ headerStyle: { backgroundColor: "#FAC3AE" } }}
     >
-      <Stack.Screen name="Eventos Admin" component={RallyAdmin} />
+      <Stack.Screen name="Mis Eventos" component={RallyAdmin} />
       <Stack.Screen name="Detalles" component={Detalles} />
       <Stack.Screen
         name="Añadir Evento"
         component={AñadirEvento}
         options={{}}
       />
+      <Stack.Screen name="Editar evento" component={EditarEvento} />
       <Stack.Screen
         name="Registro para Eventos"
         component={EventRegister}
@@ -124,7 +125,7 @@ function StackGroup() {
       screenOptions={{ headerStyle: { backgroundColor: "#FAC3AE" } }}
     >
       <Stack.Screen
-        name="Eventos Activos"
+        name="Eventos"
         component={TopTabGroup}
         options={{
           headerRight: () => (
@@ -172,7 +173,7 @@ function StackGroup() {
         component={AñadirEvento}
         options={{}}
       />
-      <Stack.Screen name="Editar evento" component={EditarEvento} />
+
       <Stack.Screen
         name="Registro para Eventos"
         component={EventRegister}
@@ -184,16 +185,31 @@ function StackGroup() {
   );
 }
 //admin
-const rol = "user";
+
 //usuarios
 function TabGroup() {
+  const [rol, setRol] = useState("");
+  const { navigate } = useNavigation();
+  const [isLogged, setIsLogged] = useState(auth.currentUser.uid);
+
+  const getDocument = async () => {
+    const docRef = doc(FIREBASE_DB, "users", `${isLogged}`);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setRol(docSnap.data().rol);
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  };
+  getDocument();
   if (rol == "admin") {
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, focused, size }) => {
             let iconName;
-            if (route.name === "Eventos") {
+            if (route.name === "Eventos Admin") {
               iconName = "motorcycle";
             } else if (route.name === "Market") {
               iconName = "shopping-cart";
@@ -208,11 +224,11 @@ function TabGroup() {
       >
         <Tab.Screen name="Market" component={Market} />
         <Tab.Screen
-          name="Eventos"
+          name="Eventos Admin"
           component={AdminGroup}
           options={{ headerShown: false }}
         />
-        <Tab.Screen name="Bandeja" component={AñadirEvento} />
+        <Tab.Screen name="Bandeja" component={Bandeja} />
         <Tab.Screen name="Configuración" component={Configuracion} />
       </Tab.Navigator>
     );
@@ -222,7 +238,7 @@ function TabGroup() {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, focused, size }) => {
             let iconName;
-            if (route.name === "Eventos") {
+            if (route.name === "Eventos User") {
               iconName = "motorcycle";
             } else if (route.name === "Market") {
               iconName = "shopping-cart";
@@ -237,7 +253,7 @@ function TabGroup() {
       >
         <Tab.Screen name="Market" component={Market} />
         <Tab.Screen
-          name="Eventos"
+          name="Eventos User"
           component={StackGroup}
           options={{ headerShown: false }}
         />

@@ -80,10 +80,10 @@ export default function AñadirEvento(props) {
   return (
     <ScrollView>
       <View style={styles.containerPrincipal}>
-        <Text style={styles.tituloEvento}>Añadir Evento</Text>
+        {/* <Text style={styles.tituloEvento}>Añadir Evento</Text> */}
 
         {/* Agregar foto del evento  */}
-        <View style={styles.containerFoto}>
+        <View style={[styles.containerFoto, { marginTop: 20 }]}>
           <TouchableOpacity style={styles.buttonFoto} onPress={pickImage}>
             {!fotoEvento && <Text>Agregar foto </Text>}
 

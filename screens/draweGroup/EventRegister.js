@@ -78,7 +78,6 @@ export default function EventRegister({ route }) {
     const NewDate = moment(date).format("DD/MM/YYYY");
     setUserRegister({ ...userRegister, fecha_nacimiento: NewDate });
     hideDatePicker();
-    console.log(NewDate);
     setUserData({ ...userData, fecha_nacimiento: date });
   };
 
@@ -174,12 +173,10 @@ export default function EventRegister({ route }) {
   };
 
   const valiSeguroMedico = (value) => {
-    console.log(value);
     setUserData({ ...userData, seguroMedico: value });
   };
 
   editarCambios = () => {
-    console.log(userData);
     updateDoc(doc(FIREBASE_DB, "users", `${usuario}`), {
       apodo: userData.apodo,
       celular: userData.celular,
@@ -336,6 +333,7 @@ export default function EventRegister({ route }) {
                   doneText="Aceptar"
                   placeholder={{ value: null, label: "Selecciona un Estado" }}
                   style={{ width: 100, flex: 1 }}
+                  value={userData.estado}
                   onValueChange={(value) => {
                     getEstados(value),
                       setUserData({ ...userData, estado: value });
@@ -361,6 +359,7 @@ export default function EventRegister({ route }) {
                     value: null,
                     label: "Selecciona un Municipio",
                   }}
+                  value={userData.municipio}
                   style={{
                     width: 100,
                     flex: 1,
@@ -393,6 +392,7 @@ export default function EventRegister({ route }) {
                 <RNPickerSelect
                   style={{ width: 100, flex: 1, viewContainer: true }}
                   doneText="Aceptar"
+                  value={userData.tipoSangre}
                   placeholder={{
                     value: null,
                     label: "Selecciona un tipo de sangre",
@@ -424,6 +424,7 @@ export default function EventRegister({ route }) {
                 </Text>
                 <RNPickerSelect
                   doneText="Aceptar"
+                  value={userData.seguroMedico}
                   placeholder={{
                     value: null,
                     label: "¿Cuenta con seguro Medico?",
