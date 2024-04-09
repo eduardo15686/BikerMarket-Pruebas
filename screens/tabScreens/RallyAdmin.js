@@ -85,7 +85,6 @@ export default function RallyAdmin() {
                 <Text style={styles.userText}>
                   {item.datos.eventDesc.substring(0, 30)} ...
                 </Text>
-                <Text style={styles.userText}>{item.datos.eventDesc.substring(0, 30)} ...</Text>
                 <Text style={styles.subTitle}>
                   Fecha de inicio: {item.datos.dateInit}
                 </Text>
