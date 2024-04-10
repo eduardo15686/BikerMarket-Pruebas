@@ -12,10 +12,12 @@ import {
 } from "react-native";
 import { React, useState, useEffect } from "react";
 
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
+import moment from "moment";
 
 import { getStorage } from "firebase/storage";
 import firebaseAuth from "../../../credentials";
@@ -23,7 +25,6 @@ import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
 
 import { getAuth } from "firebase/auth";
-// import Moment from 'react-moment';
 const auth = getAuth(firebaseAuth);
 const storage = getStorage(FIREBASE_APP);
 
@@ -63,25 +64,33 @@ export default function AñadirEvento(props) {
     }
   };
 
-  const showPicker = () => {
+  const showDatePicker = () => {
     setIsPickerShow(true);
   };
-  const showPickerEnd = () => {
+  const hideDatePicker = () => {
+    setIsPickerShow(false);
+  };
+
+
+  const showDatePickerEnd = () => {
     setIsPickerShowEnd(true);
   };
 
-  const onChangeStart = (event, value) => {
-    setDates({ ...dates, date: value });
-    if (Platform.OS === "android") {
-      setIsPickerShow(false);
-    }
+  const hideDatePickerEnd = () => {
+    setIsPickerShowEnd(false);
   };
 
-  const onChangeEnd = (event, value) => {
-    setDates({ ...dates, endDate: value });
-    if (Platform.OS === "android") {
-      setIsPickerShowEnd(false);
-    }
+
+  const handleConfirm = (date) => {
+    setDates({ ...dates, date: date });
+    hideDatePicker();
+  };
+
+
+
+  const handleConfirmEnd = (date) => {
+    setDates({ ...dates, endDate: date });
+    hideDatePickerEnd();
   };
 
   return (
@@ -157,7 +166,6 @@ export default function AñadirEvento(props) {
             >
               <Text style={{ fontWeight: "bold" }}>Fecha de inicio: </Text>
               <Text>
-                {" "}
                 {dates.date.toLocaleDateString("es-Mx", {
                   weekday: "long",
                   day: "numeric",
@@ -167,29 +175,22 @@ export default function AñadirEvento(props) {
               </Text>
             </Text>
           </View>
-          {!isPickerShow && (
-            <View style={{ padding: 15 }}>
-              <Button
-                title="Seleccionar fecha de inicio del evento"
-                color="#FE895C"
-                onPress={showPicker}
-              />
-            </View>
-          )}
-          {isPickerShow && (
-            <DateTimePicker
-              maximumDate={new Date(2030, 10, 20)}
-              minimumDate={new Date(2024, 0, 1)}
-              value={dates.date}
-              mode={"date"}
-              display={Platform.OS === "ios" ? "spinner" : "spinner"}
-              negative={{ label: "Cancel", textColor: "red" }}
-              positiveButton="OK!"
-              timeZoneName={"America/Mexico_City"}
-              locale="es-ES"
-              onChange={onChangeStart}
-            />
-          )}
+          <Button title="Seleccionar Fecha"
+            color="#FE895C"
+            onPress={showDatePicker} />
+          <DateTimePickerModal
+            maximumDate={new Date(2030, 10, 20)}
+            minimumDate={new Date(2024, 0, 1)}
+            isVisible={isPickerShow}
+            mode="date"
+            locale="es-Es"
+            display="spinner"
+            cancelTextIOS="Cancelar"
+            confirmTextIOS="Confirmar"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+            date={new Date()}
+          />
 
           {/* Fecha de finalizacion */}
           <View style={{ fontSize: 20, color: "#FE895C" }}>
@@ -205,29 +206,23 @@ export default function AñadirEvento(props) {
               })}
             </Text>
           </View>
-          {!isPickerShowEnd && (
-            <View style={{ padding: 15 }}>
-              <Button
-                title="Seleccionar fecha en que termina el evento"
-                color="#FE895C"
-                onPress={showPickerEnd}
-              />
-            </View>
-          )}
-          {isPickerShowEnd && (
-            <DateTimePicker
-              maximumDate={new Date(2030, 10, 20)}
-              minimumDate={new Date(2024, 0, 1)}
-              value={dates.endDate}
-              mode={"date"}
-              display={Platform.OS === "ios" ? "spinner" : "spinner"}
-              negative={{ label: "Cancel", textColor: "red" }}
-              positiveButton="OK!"
-              timeZoneName={"America/Mexico_City"}
-              locale="es-ES"
-              onChange={onChangeEnd}
-            />
-          )}
+          <Button title="Seleccionar Fecha"
+            color="#FE895C"
+            onPress={showDatePickerEnd} />
+          <DateTimePickerModal
+            maximumDate={new Date(2030, 10, 20)}
+            minimumDate={new Date(2024, 0, 1)}
+            isVisible={isPickerShowEnd}
+            mode="date"
+            locale="es-Es"
+            display="spinner"
+            cancelTextIOS="Cancelar"
+            confirmTextIOS="Confirmar"
+            onConfirm={handleConfirmEnd}
+            onCancel={hideDatePickerEnd}
+            date={new Date()}
+          />
+
         </View>
 
         {/*  validaciones */}
