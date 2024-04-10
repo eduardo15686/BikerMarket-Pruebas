@@ -295,7 +295,7 @@ export default function EventRegister({ route }) {
                   paddingRight: 10,
                 }}
               >
-                <Text style={styles.text}>Fecha de nacimiento</Text>
+                <Text style={styles.text}>Fecha de nacimiento 2</Text>
                 <Text>
                   {userData.fecha_nacimiento.toLocaleDateString("es-Mx", {
                     weekday: "long",
