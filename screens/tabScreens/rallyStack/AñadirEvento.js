@@ -10,7 +10,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
@@ -23,24 +23,33 @@ import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
 
 import { getAuth } from "firebase/auth";
+import Moment from 'react-moment';
 const auth = getAuth(firebaseAuth);
 const storage = getStorage(FIREBASE_APP);
 
 export default function AñadirEvento(props) {
+
+  const [userData, setUserData] = useState(
+    [{
+      nameEvent: "",
+      vali: "empty",
+      certi: "empty",
+    }]
+  );
+
+  const [dates, setDates] = useState({
+    date: new Date(),
+    endDate: new Date(),
+  });
+
   const [fotoEvento, setFotoEvento] = useState(null);
-  const [nameEvent, setNameEvent] = useState("");
+  
   const [descEvent, setDescEvent] = useState("");
+  const [userID, setUserID] = useState(auth.currentUser.uid);
 
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
 
-  const [date, setDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-
-  const [vali, setVali] = useState("unknown");
-  const [certi, setCerti] = useState("unknown");
-
-  const [userID, setUserID] = useState(auth.currentUser.uid);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -64,18 +73,21 @@ export default function AñadirEvento(props) {
   };
 
   const onChangeStart = (event, value) => {
-    setDate(value);
+    setDates({ ...dates, date: value });
     if (Platform.OS === "android") {
       setIsPickerShow(false);
     }
   };
 
   const onChangeEnd = (event, value) => {
-    setEndDate(value);
+    setDates({ ...dates, endDate: value });
     if (Platform.OS === "android") {
       setIsPickerShowEnd(false);
     }
   };
+
+
+
 
   return (
     <ScrollView>
@@ -111,7 +123,9 @@ export default function AñadirEvento(props) {
               }}
             >
               <TextInput
-                onChangeText={(text) => setNameEvent(text)}
+                onChangeText={(text) =>
+                  setUserData({ ...userData, eventName: text })
+                }
                 style={styles.inputEventosDesc}
               />
             </View>
@@ -129,7 +143,7 @@ export default function AñadirEvento(props) {
                 alignItems: "center",
               }}
             >
-              <TextInput
+             <TextInput
                 onChangeText={(text) => setDescEvent(text)}
                 style={styles.inputEventosDesc}
                 maxLength={200}
@@ -147,7 +161,7 @@ export default function AñadirEvento(props) {
               style={{ fontSize: 14, color: "#f15a24", textAlign: "center" }}
             >
               <Text style={{ fontWeight: "bold" }}>Fecha de inicio: </Text>
-              {date.toUTCString()}
+              <Text> {dates.date.toUTCString()}</Text>
             </Text>
           </View>
           {!isPickerShow && (
@@ -163,7 +177,7 @@ export default function AñadirEvento(props) {
             <DateTimePicker
               maximumDate={new Date(2030, 10, 20)}
               minimumDate={new Date(2024, 0, 1)}
-              value={new Date()}
+              value={dates.date}
               mode={"date"}
               display={Platform.OS === "ios" ? "spinner" : "spinner"}
               negative={{ label: "Cancel", textColor: "red" }}
@@ -180,7 +194,7 @@ export default function AñadirEvento(props) {
               style={{ fontSize: 14, color: "#f15a24", textAlign: "center" }}
             >
               <Text style={{ fontWeight: "bold" }}>Fecha en que termina: </Text>
-              {endDate.toUTCString()}
+              {dates.endDate.toUTCString()}
             </Text>
           </View>
           {!isPickerShowEnd && (
@@ -196,7 +210,7 @@ export default function AñadirEvento(props) {
             <DateTimePicker
               maximumDate={new Date(2030, 10, 20)}
               minimumDate={new Date(2024, 0, 1)}
-              value={new Date()}
+              value={dates.endDate}
               mode={"date"}
               display={Platform.OS === "ios" ? "spinner" : "spinner"}
               negative={{ label: "Cancel", textColor: "red" }}
@@ -210,76 +224,88 @@ export default function AñadirEvento(props) {
 
         {/*  validaciones */}
 
-        <View style={styles.containerValidaciones}>
-          <Text
-            style={{
-              fontSize: 16,
-              color: "#f15a24",
-              textAlign: "center",
-            }}
-          >
+        <View
+          style={{
+            marginVertical: 10,
+            paddingLeft: 10,
+            paddingRight: 10,
+          }}
+        >
+          <Text style={{
+            fontSize: 16,
+            color: "#f15a24",
+            textAlign: "center",
+          }}>
             ¿Validacion de evidencias? {"\n"}
             Por favor selecciona "SI" o "NO"
           </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
+          <RNPickerSelect
+            style={{ width: 100, flex: 1, viewContainer: true }}
+            doneText="Aceptar"
+            value={userData.vali}
+            placeholder={{
+              value: null,
+              label: "Selecciona una opcion",
             }}
-          >
-            <Picker
-              mode="dropdown"
-              selectedValue={vali}
-              onValueChange={(value, index) => setVali(value)}
-              style={styles.dropDown}
-            >
-              <Picker.Item label="Abrir" value="unknown" />
-              <Picker.Item label="SI" value="sivali" />
-              <Picker.Item label="NO " value="novali" />
-            </Picker>
-          </View>
+            onValueChange={(value) =>
+              setUserData({
+                ...userData,
+                vali: value
+              })
+            }
+            items={[
+              { label: "SI", value: "sivali" },
+              { label: "NO", value: "novali" },
+            ]}
+          />
         </View>
 
-        <View style={styles.containerValidaciones}>
-          <Text
-            style={{
-              fontSize: 16,
-              color: "#f15a24",
-              textAlign: "center",
-            }}
-          >
+        <View
+          style={{
+            marginVertical: 10,
+            paddingLeft: 10,
+            paddingRight: 10,
+          }}
+        >
+          <Text style={{
+            fontSize: 16,
+            color: "#f15a24",
+            textAlign: "center",
+          }}>
             ¿Entrega de certificados? {"\n"}
             Por favor selecciona "SI" o "NO"
           </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
+          <RNPickerSelect
+            style={{ width: 100, flex: 1, viewContainer: true }}
+            doneText="Aceptar"
+            value={userData.certi}
+            placeholder={{
+              value: null,
+              label: "Selecciona una opcion",
             }}
-          >
-            <Picker
-              mode="dropdown"
-              selectedValue={certi}
-              onValueChange={(value, index) => setCerti(value)}
-              style={styles.dropDown}
-            >
-              <Picker.Item label="Abrir" value="unknown" />
-              <Picker.Item label="SI" value="sicerti" />
-              <Picker.Item label="NO " value="nocerti" />
-            </Picker>
-          </View>
+            onValueChange={(value) =>
+              setUserData({
+                ...userData,
+                certi: value
+              })
+            }
+            items={[
+              { label: "SI", value: "sicerti" },
+              { label: "NO", value: "nocerti" },
+            ]}
+          />
         </View>
 
         <Funcionalidades
           title={"Registrar evento"}
           eventPhoto={fotoEvento}
           UID={userID}
-          eventName={nameEvent}
+          eventName={userData.eventName}
           eventDesc={descEvent}
-          dateInit={date.toUTCString()}
-          dateEnd={endDate.toUTCString()}
-          validation={vali.toLowerCase()}
-          certification={certi.toLowerCase()}
+          dateInit={dates.date}
+          dateEnd={dates.endDate}
+          validation={userData.vali}
+          certification={userData.certi}
           callFunction={"handleRegisterEvent"}
         />
       </View>
@@ -330,7 +356,6 @@ const styles = StyleSheet.create({
   },
   textEvento: {
     fontSize: 16,
-
     color: "#f15a24",
     marginTop: 10,
     marginBottom: 10,
@@ -345,13 +370,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3.5,
   },
   containerFechaEvento: {
-    padding: 10,
-    marginBottom: 15,
-    marginEnd: -1,
-    borderTopColor: "#FAC3AE",
-    borderTopWidth: 5,
-  },
-  containerValidaciones: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
@@ -390,44 +408,3 @@ const styles = StyleSheet.create({
   },
 });
 
-{
-  /* 
-<View>
-          <View
-            style={styles.containerValidaciones}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
-              Verifique su validacion {'\n'}
-              Por favor seleccione "SI" o "NO"
-            </Text>
-            <RNPickerSelect
-              value={vali}
-              style={styles.dropDown}
-              onValueChange={(value, index) =>
-                setVali({  value })}
-              items={[
-                { label: 'SI', value: 'sivali' },
-                { label: 'NO', value: 'novali' },
-              ]}
-            />
-
-          </View>
-
-          <View
-            style={styles.containerValidaciones}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
-              Verifique su certificacion {'\n'}
-              Por favor seleccione "SI" o "NO"
-            </Text>
-            <RNPickerSelect
-              value={certi}
-              style={styles.dropDown}
-              onValueChange={(value, index) =>
-                setCerti({  value })}
-              items={[
-                { label: 'SI', value: 'sicerti' },
-                { label: 'NO', value: 'nocerti' },
-              ]}
-            />
-          </View>
-        </View>*/
-}

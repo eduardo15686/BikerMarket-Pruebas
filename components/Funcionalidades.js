@@ -58,7 +58,7 @@ export default function funcionalidades(props) {
     });
     const filename = setHayFoto.substring(setHayFoto.lastIndexOf("/") + 1);
     const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-    await uploadBytes(storageRef, blob).then((snapshot) => {});
+    await uploadBytes(storageRef, blob).then((snapshot) => { });
     const url = await getDownloadURL(storageRef);
   };
 
@@ -157,14 +157,16 @@ export default function funcionalidades(props) {
     const storage = getStorage(FIREBASE_APP);
     if (props.eventName == "" || props.eventDesc == "") {
       Alert.alert("Error", "Por favor, llene todos los cambios");
+      console.log(props.eventDesc);
       return;
     }
-    if (props.validation === "unknown" || props.certification === "unknown") {
+    if (props.validation === undefined || props.certification === undefined) {
       Alert.alert("No olvide seleccionar la certificacion o validacion");
       return;
     }
     try {
       if (!props.eventPhoto) {
+        console.log("no hay foto: ", props.eventDesc);
         await addDoc(collection(FIREBASE_DB, "events"), {
           eventPhoto: hayFoto,
           status: "Activo",
@@ -195,9 +197,8 @@ export default function funcionalidades(props) {
           props.eventPhoto.lastIndexOf("/") + 1
         );
         const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-        await uploadBytes(storageRef, blob).then((snapshot) => {});
+        await uploadBytes(storageRef, blob).then((snapshot) => { });
         const url = await getDownloadURL(storageRef);
-
         await addDoc(collection(FIREBASE_DB, "events"), {
           eventPhoto: url,
           status: "Activo",
@@ -247,7 +248,7 @@ export default function funcionalidades(props) {
           props.editPhoto.lastIndexOf("/") + 1
         );
         const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-        await uploadBytes(storageRef, blob).then((snapshot) => {});
+        await uploadBytes(storageRef, blob).then((snapshot) => { });
         const urlEdit = await getDownloadURL(storageRef);
         await updateDoc(dataEdit, {
           eventPhoto: urlEdit,
@@ -260,7 +261,6 @@ export default function funcionalidades(props) {
         });
         Alert.alert("Evento editado!");
       } else {
-        console.log("no se edito la foto");
         await updateDoc(dataEdit, {
           eventName: props.editName,
           eventDesc: props.editDesc,
@@ -273,7 +273,6 @@ export default function funcionalidades(props) {
       }
     } catch (error) {
       console.log("Desde editar", error);
-      console.log(props.image);
     }
   }
 
