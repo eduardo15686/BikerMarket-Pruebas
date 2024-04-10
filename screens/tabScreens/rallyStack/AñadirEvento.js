@@ -28,14 +28,13 @@ const auth = getAuth(firebaseAuth);
 const storage = getStorage(FIREBASE_APP);
 
 export default function AñadirEvento(props) {
-
-  const [userData, setUserData] = useState(
-    [{
+  const [userData, setUserData] = useState([
+    {
       nameEvent: "",
       vali: "empty",
       certi: "empty",
-    }]
-  );
+    },
+  ]);
 
   const [dates, setDates] = useState({
     date: new Date(),
@@ -43,13 +42,12 @@ export default function AñadirEvento(props) {
   });
 
   const [fotoEvento, setFotoEvento] = useState(null);
-  
+
   const [descEvent, setDescEvent] = useState("");
   const [userID, setUserID] = useState(auth.currentUser.uid);
 
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
-
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -85,9 +83,6 @@ export default function AñadirEvento(props) {
       setIsPickerShowEnd(false);
     }
   };
-
-
-
 
   return (
     <ScrollView>
@@ -143,7 +138,7 @@ export default function AñadirEvento(props) {
                 alignItems: "center",
               }}
             >
-             <TextInput
+              <TextInput
                 onChangeText={(text) => setDescEvent(text)}
                 style={styles.inputEventosDesc}
                 maxLength={200}
@@ -161,7 +156,15 @@ export default function AñadirEvento(props) {
               style={{ fontSize: 14, color: "#f15a24", textAlign: "center" }}
             >
               <Text style={{ fontWeight: "bold" }}>Fecha de inicio: </Text>
-              <Text> {dates.date.toUTCString()}</Text>
+              <Text>
+                {" "}
+                {dates.date.toLocaleDateString("es-Mx", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </Text>
             </Text>
           </View>
           {!isPickerShow && (
@@ -193,8 +196,13 @@ export default function AñadirEvento(props) {
             <Text
               style={{ fontSize: 14, color: "#f15a24", textAlign: "center" }}
             >
-              <Text style={{ fontWeight: "bold" }}>Fecha en que termina: </Text>
-              {dates.endDate.toUTCString()}
+              <Text style={{ fontWeight: "bold" }}>Fecha en que termina: </Text>{" "}
+              {dates.endDate.toLocaleDateString("es-Mx", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
             </Text>
           </View>
           {!isPickerShowEnd && (
@@ -231,11 +239,13 @@ export default function AñadirEvento(props) {
             paddingRight: 10,
           }}
         >
-          <Text style={{
-            fontSize: 16,
-            color: "#f15a24",
-            textAlign: "center",
-          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: "#f15a24",
+              textAlign: "center",
+            }}
+          >
             ¿Validacion de evidencias? {"\n"}
             Por favor selecciona "SI" o "NO"
           </Text>
@@ -250,7 +260,7 @@ export default function AñadirEvento(props) {
             onValueChange={(value) =>
               setUserData({
                 ...userData,
-                vali: value
+                vali: value,
               })
             }
             items={[
@@ -267,11 +277,13 @@ export default function AñadirEvento(props) {
             paddingRight: 10,
           }}
         >
-          <Text style={{
-            fontSize: 16,
-            color: "#f15a24",
-            textAlign: "center",
-          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: "#f15a24",
+              textAlign: "center",
+            }}
+          >
             ¿Entrega de certificados? {"\n"}
             Por favor selecciona "SI" o "NO"
           </Text>
@@ -286,7 +298,7 @@ export default function AñadirEvento(props) {
             onValueChange={(value) =>
               setUserData({
                 ...userData,
-                certi: value
+                certi: value,
               })
             }
             items={[
@@ -407,4 +419,3 @@ const styles = StyleSheet.create({
     borderBottomColor: "#FAC3AE",
   },
 });
-
