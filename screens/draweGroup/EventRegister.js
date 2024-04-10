@@ -44,25 +44,8 @@ const storage = getStorage(FIREBASE_APP);
 
 export default function EventRegister({ route }) {
   const [image, setImage] = useState(null);
-  const [userData, setUserData] = useState([
-    {
-      apodo: "aa",
-      celular: "",
-      estado: "",
-      fecha_nacimiento: "",
-      municipio: "",
-      nombre: "",
-      seguroMedico: "",
-      tipoSangre: "",
-      institucionMedica: "",
-      poliza: "",
-      estatus: "Activo",
-    },
-  ]);
+  const [userData, setUserData] = useState({ fecha_nacimiento: new Date() });
   const [municipios, setMunicipios] = useState([]);
-  const [userRegister, setUserRegister] = useState({
-    fecha_nacimiento: Date(),
-  });
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const showDatePicker = () => {
@@ -76,9 +59,12 @@ export default function EventRegister({ route }) {
     //console.log("A date has been picked: ", date);
     const fecha = Date(date);
     const NewDate = moment(date).format("DD/MM/YYYY");
-    setUserRegister({ ...userRegister, fecha_nacimiento: NewDate });
+    // new Date(route.params.data.datos.dateInit.seconds * 1000)
     hideDatePicker();
-    setUserData({ ...userData, fecha_nacimiento: date });
+    setUserData({
+      ...userData,
+      fecha_nacimiento: new Date(date),
+    });
   };
 
   // Listen to onAuthStateChanged
@@ -90,7 +76,12 @@ export default function EventRegister({ route }) {
         const docRef = doc(FIREBASE_DB, "users", `${usuario}`);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setUserData(docSnap.data());
+          setUserData({
+            ...docSnap.data(),
+            fecha_nacimiento: new Date(
+              docSnap.data().fecha_nacimiento.seconds * 1000
+            ),
+          });
         } else {
           setUserData(null);
           console.log("No document!");
@@ -305,7 +296,14 @@ export default function EventRegister({ route }) {
                 }}
               >
                 <Text style={styles.text}>Fecha de nacimiento</Text>
-                <Text>{userRegister.fecha_nacimiento}</Text>
+                <Text>
+                  {userData.fecha_nacimiento.toLocaleDateString("es-Mx", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </Text>
                 <Button title="Seleccionar Fecha" onPress={showDatePicker} />
                 <DateTimePickerModal
                   isVisible={isDatePickerVisible}
@@ -316,7 +314,7 @@ export default function EventRegister({ route }) {
                   confirmTextIOS="Confirmar"
                   onConfirm={handleConfirm}
                   onCancel={hideDatePicker}
-                  date={new Date()}
+                  date={userData.fecha_nacimiento}
                 />
               </View>
             </View>
