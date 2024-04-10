@@ -7,14 +7,13 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from "react-native";
 
-import DateTimePicker from '@react-native-community/datetimepicker';
-import * as ImagePicker from 'expo-image-picker';
+import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
 import RNPickerSelect from "react-native-picker-select";
 import Funcionalidades from "././components/Funcionalidades";
-
 
 export default function EditarEvento({ route }) {
   const [info, setInfo] = useState({
@@ -23,15 +22,18 @@ export default function EditarEvento({ route }) {
     name: route.params.data.datos.eventName,
     desc: route.params.data.datos.eventDesc,
     vali: route.params.data.datos.validation,
-    certi: route.params.data.datos.certification
-  })
-  
-  
+    certi: route.params.data.datos.certification,
+  });
+
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
 
-  const [date, setDate] = useState(new Date(route.params.data.datos.dateInit)); 
-  const [endDate, setEndDate] = useState(new Date(route.params.data.datos.dateEnd));
+  const [date, setDate] = useState(
+    new Date(route.params.data.datos.dateInit.seconds * 1000)
+  );
+  const [endDate, setEndDate] = useState(
+    new Date(route.params.data.datos.dateEnd.seconds * 1000)
+  );
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -86,7 +88,6 @@ export default function EditarEvento({ route }) {
 
         {/* Editar nombre y descripcion */}
         <View>
-
           {/* Nombre */}
 
           <View style={styles.containerEventoInfo}>
@@ -130,9 +131,7 @@ export default function EditarEvento({ route }) {
               </TextInput>
             </View>
           </View>
-
         </View>
-
 
         {/* Editar fechas */}
         <View style={styles.containerFechaEvento}>
@@ -140,13 +139,17 @@ export default function EditarEvento({ route }) {
           <View style={{ fontSize: 20, color: "#FE895C" }}>
             <Text style={{ fontSize: 15, color: "grey" }}>
               <Text style={{ fontWeight: "bold" }}>Fecha de inicio:</Text>
-              {date.toUTCString()}
+              {date.toLocaleDateString("es-Mx", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
             </Text>
           </View>
           {!isPickerShow && (
             <View style={{ padding: 15 }}>
               <Button
-
                 title="Seleccionar fecha de inicio"
                 color="#FE895C"
                 onPress={showPicker}
@@ -155,7 +158,7 @@ export default function EditarEvento({ route }) {
           )}
           {isPickerShow && (
             <DateTimePicker
-              value={new Date()}
+              value={date}
               maximumDate={new Date(2030, 10, 20)}
               minimumDate={new Date(2024, 0, 1)}
               mode={"date"}
@@ -172,7 +175,12 @@ export default function EditarEvento({ route }) {
           <View style={{ fontSize: 20, color: "#FE895C" }}>
             <Text style={{ fontSize: 15, color: "grey" }}>
               <Text style={{ fontWeight: "bold" }}>Fecha en que termina:</Text>
-              {endDate.toUTCString()}
+              {endDate.toLocaleDateString("es-Mx", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
             </Text>
           </View>
           {!isPickerShowEnd && (
@@ -186,7 +194,7 @@ export default function EditarEvento({ route }) {
           )}
           {isPickerShowEnd && (
             <DateTimePicker
-              value={new Date()}
+              value={endDate}
               maximumDate={new Date(2030, 10, 20)}
               minimumDate={new Date(2024, 0, 1)}
               mode={"date"}
@@ -200,42 +208,54 @@ export default function EditarEvento({ route }) {
           )}
         </View>
 
-
         {/* Editar validaciones */}
         <View>
-          <View
-            style={styles.containerValidaciones}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
-              Verifique su validacion {'\n'}
+          <View style={styles.containerValidaciones}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 16,
+                color: "grey",
+                textAlign: "center",
+              }}
+            >
+              Verifique su validacion {"\n"}
               Por favor seleccione "SI" o "NO"
             </Text>
             <RNPickerSelect
               value={info.vali}
               style={styles.dropDown}
               onValueChange={(value, index) =>
-                setInfo({ ...info, vali: value })}
+                setInfo({ ...info, vali: value })
+              }
               items={[
-                { label: 'SI', value: 'sivali' },
-                { label: 'NO', value: 'novali' },
+                { label: "SI", value: "sivali" },
+                { label: "NO", value: "novali" },
               ]}
             />
-
           </View>
 
-          <View
-            style={styles.containerValidaciones}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, color: 'grey', textAlign: 'center' }}>
-              Verifique su certificacion {'\n'}
+          <View style={styles.containerValidaciones}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 16,
+                color: "grey",
+                textAlign: "center",
+              }}
+            >
+              Verifique su certificacion {"\n"}
               Por favor seleccione "SI" o "NO"
             </Text>
             <RNPickerSelect
               value={info.certi}
               style={styles.dropDown}
               onValueChange={(value, index) =>
-                setInfo({ ...info, certi: value })}
+                setInfo({ ...info, certi: value })
+              }
               items={[
-                { label: 'SI', value: 'sicerti' },
-                { label: 'NO', value: 'nocerti' },
+                { label: "SI", value: "sicerti" },
+                { label: "NO", value: "nocerti" },
               ]}
             />
           </View>
@@ -246,8 +266,8 @@ export default function EditarEvento({ route }) {
           editPhoto={info.image}
           editName={info.name}
           editDesc={info.desc}
-          editInit={date.toUTCString()}
-          editEnd={endDate.toUTCString()}
+          editInit={date}
+          editEnd={endDate}
           editVali={info.vali}
           editCerti={info.certi}
           callFunction={"handlerEditEvent"}
@@ -265,39 +285,39 @@ export default function EditarEvento({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
   },
   containerEventoInfo: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    alignItems: 'center'
+    alignSelf: "stretch",
+    justifyContent: "center",
+    alignItems: "center",
   },
   inputEventosDesc: {
-    width: '100%',
-    textAlignVertical: 'top',
+    width: "100%",
+    textAlignVertical: "top",
     margin: 5,
     padding: 5,
-    borderBottomColor: '#FAC3AE',
-    borderBottomWidth: 3.5
+    borderBottomColor: "#FAC3AE",
+    borderBottomWidth: 3.5,
   },
   containerFechaEvento: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
-    borderTopColor: '#FAC3AE',
-    borderTopWidth: 5
+    borderTopColor: "#FAC3AE",
+    borderTopWidth: 5,
   },
   containerValidaciones: {
     padding: 10,
     marginBottom: 15,
     marginEnd: -1,
-    borderTopColor: '#FAC3AE',
-    borderTopWidth: 5
+    borderTopColor: "#FAC3AE",
+    borderTopWidth: 5,
   },
   dropDown: {
     flex: 1,
@@ -306,5 +326,5 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: "#666",
-  }
+  },
 });

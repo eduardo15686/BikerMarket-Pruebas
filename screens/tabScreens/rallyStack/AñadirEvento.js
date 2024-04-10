@@ -23,7 +23,7 @@ import { FIREBASE_APP } from "../../../credentials";
 import Funcionalidades from "../../../components/Funcionalidades";
 
 import { getAuth } from "firebase/auth";
-import Moment from 'react-moment';
+// import Moment from 'react-moment';
 const auth = getAuth(firebaseAuth);
 const storage = getStorage(FIREBASE_APP);
 

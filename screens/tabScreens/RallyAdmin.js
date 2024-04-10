@@ -30,7 +30,18 @@ export default function RallyAdmin() {
       onSnapshot(q, (querySnapshot) => {
         const arrayEmpty = [];
         querySnapshot.forEach((doc) => {
-          arrayEmpty.push({ id: doc.id, datos: doc.data() });
+          arrayEmpty.push({
+            id: doc.id,
+            datos: doc.data(),
+            fecha: new Date(
+              doc.data().dateInit.seconds * 1000
+            ).toLocaleDateString("es-Mx", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }),
+          });
         });
         setTodoData(arrayEmpty);
       });
@@ -86,7 +97,7 @@ export default function RallyAdmin() {
                   {item.datos.eventDesc.substring(0, 30)} ...
                 </Text>
                 <Text style={styles.subTitle}>
-                  Fecha de inicio: {item.datos.dateInit}
+                  Fecha de inicio: {item.datos.fecha}
                 </Text>
               </View>
             </TouchableOpacity>

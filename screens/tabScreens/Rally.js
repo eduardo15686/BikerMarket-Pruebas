@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Pressable, Image, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  Image,
+  ScrollView,
+} from "react-native";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseAuth from "../../credentials";
@@ -25,19 +32,30 @@ export default function Rally() {
     const getEvent = () => {
       const q = query(
         collection(FIREBASE_DB, "events"),
-        where("status", "==", "Activo"));
+        where("status", "==", "Activo")
+      );
 
       onSnapshot(q, (querySnapshot) => {
         const arrayEmpty = [];
         querySnapshot.forEach((doc) => {
-          arrayEmpty.push({ id: doc.id, datos: doc.data() });
+          arrayEmpty.push({
+            id: doc.id,
+            datos: doc.data(),
+            fecha: new Date(
+              doc.data().dateInit.seconds * 1000
+            ).toLocaleDateString("es-Mx", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }),
+          });
         });
         setTodoData(arrayEmpty);
       });
     };
     getEvent();
   }, []);
-
 
   const { navigate } = useNavigation();
   const navigation = useNavigation();
@@ -60,12 +78,12 @@ export default function Rally() {
   // }, []);
 
   return (
-   <ScrollView>
-    <View style={styles.container}>
-      {todoData.map((item, index) => {
-        return(
-          <View key={index} style={styles.user}>
-            <Image
+    <ScrollView>
+      <View style={styles.container}>
+        {todoData.map((item, index) => {
+          return (
+            <View key={index} style={styles.user}>
+              <Image
                 style={styles.image}
                 source={{ uri: item.datos.eventPhoto }}
               />
@@ -73,17 +91,18 @@ export default function Rally() {
               <View style={styles.userInfo}>
                 <Text style={styles.title}>{item.datos.eventName}</Text>
                 <Text style={styles.subTitle}>Descripcion:</Text>
-                <Text style={styles.userText}>{item.datos.eventDesc.substring(0, 30)} ...</Text>
+                <Text style={styles.userText}>
+                  {item.datos.eventDesc.substring(0, 30)} ...
+                </Text>
                 <Text style={styles.subTitle}>
-                  Fecha de inicio: {item.datos.dateInit}
+                  Fecha de inicio: {item.fecha}
                 </Text>
               </View>
-            
-          </View>
-        );
-      })}
-    </View>
-   </ScrollView>
+            </View>
+          );
+        })}
+      </View>
+    </ScrollView>
   );
 }
 

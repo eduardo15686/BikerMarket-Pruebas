@@ -15,23 +15,11 @@ import Market from "./screens/tabScreens/Market";
 import Detalles from "./screens/tabScreens/rallyStack/Detalles";
 import Login from "./screens/principal/Login";
 import Register from "./screens/principal/Register";
-import {
-  Button,
-  useColorScheme,
-  Pressable,
-  Text,
-  View,
-  Image,
-} from "react-native";
+import { useColorScheme, Pressable, View, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { doc, getDoc } from "firebase/firestore";
 import firebaseAuth from "./credentials";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-} from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useState, useEffect } from "react";
 import AñadirEvento from "./screens/tabScreens/rallyStack/AñadirEvento";
 import EventRegister from "./screens/draweGroup/EventRegister";
@@ -209,7 +197,7 @@ function TabGroup() {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, focused, size }) => {
             let iconName;
-            if (route.name === "Eventos Admin") {
+            if (route.name === "Eventos") {
               iconName = "motorcycle";
             } else if (route.name === "Market") {
               iconName = "shopping-cart";
@@ -224,7 +212,7 @@ function TabGroup() {
       >
         <Tab.Screen name="Market" component={Market} />
         <Tab.Screen
-          name="Eventos Admin"
+          name="Eventos"
           component={AdminGroup}
           options={{ headerShown: false }}
         />
