@@ -191,86 +191,81 @@ function TabGroup() {
     }
   };
   getDocument();
-  if (rol == "admin") {
-    return (
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, focused, size }) => {
-            let iconName;
-            if (route.name === "Eventos") {
-              iconName = "motorcycle";
-            } else if (route.name === "Market") {
-              iconName = "shopping-cart";
-            } else if (route.name === "Bandeja") {
-              iconName = "folder-open";
-            } else if (route.name === "Configuración") {
-              iconName = "gear";
-            }
-            return <FontAwesome name={iconName} color={color} size={size} />;
-          },
-        })}
-      >
-        <Tab.Screen name="Market" component={Market} />
-        <Tab.Screen
-          name="Eventos"
-          component={AdminGroup}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen name="Bandeja" component={Bandeja} />
-        <Tab.Screen name="Configuración" component={Configuracion} />
-      </Tab.Navigator>
-    );
-  } else {
-    return (
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, focused, size }) => {
-            let iconName;
-            if (route.name === "Eventos User") {
-              iconName = "motorcycle";
-            } else if (route.name === "Market") {
-              iconName = "shopping-cart";
-            } else if (route.name === "Bandeja") {
-              iconName = "folder-open";
-            } else if (route.name === "Configuración") {
-              iconName = "gear";
-            }
-            return <FontAwesome name={iconName} color={color} size={size} />;
-          },
-        })}
-      >
-        <Tab.Screen name="Market" component={Market} />
-        <Tab.Screen
-          name="Eventos User"
-          component={StackGroup}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen name="Bandeja" component={AñadirEvento} />
-        <Tab.Screen name="Configuración" component={Configuracion} />
-      </Tab.Navigator>
-    );
+  if (rol != "") {
+    if (rol == "admin") {
+      return (
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color, focused, size }) => {
+              let iconName;
+              if (route.name === "Eventos") {
+                iconName = "motorcycle";
+              } else if (route.name === "Market") {
+                iconName = "shopping-cart";
+              } else if (route.name === "Bandeja") {
+                iconName = "folder-open";
+              } else if (route.name === "Configuración") {
+                iconName = "gear";
+              }
+              return <FontAwesome name={iconName} color={color} size={size} />;
+            },
+          })}
+        >
+          <Tab.Screen name="Market" component={Market} />
+          <Tab.Screen
+            name="Eventos"
+            component={AdminGroup}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen name="Bandeja" component={Bandeja} />
+          <Tab.Screen name="Configuración" component={Configuracion} />
+        </Tab.Navigator>
+      );
+    } else {
+      return (
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color, focused, size }) => {
+              let iconName;
+              if (route.name === "Eventos User") {
+                iconName = "motorcycle";
+              } else if (route.name === "Market") {
+                iconName = "shopping-cart";
+              } else if (route.name === "Bandeja") {
+                iconName = "folder-open";
+              } else if (route.name === "Configuración") {
+                iconName = "gear";
+              }
+              return <FontAwesome name={iconName} color={color} size={size} />;
+            },
+          })}
+        >
+          <Tab.Screen name="Market" component={Market} />
+          <Tab.Screen
+            name="Eventos User"
+            component={StackGroup}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen name="Bandeja" component={AñadirEvento} />
+          <Tab.Screen name="Configuración" component={Configuracion} />
+        </Tab.Navigator>
+      );
+    }
   }
 }
 
 export default function Navigation() {
   const currentTheme = useColorScheme();
-  const [isLogged, setIsLogged] = useState(null);
-  useEffect(() => {
-    if (auth) {
-      const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-        if (authUser) {
-          setIsLogged(authUser.uid);
-        } else {
-          setIsLogged(null);
-        }
-      });
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, []);
+  const [isLogged, setIsLogged] = useState();
 
-  const tipoUsuario = "admin";
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setIsLogged(user);
+    } else {
+      setIsLogged();
+    }
+  });
+
   if (isLogged == null) {
     return (
       <NavigationContainer

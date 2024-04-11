@@ -82,6 +82,7 @@ export default function Rally() {
       <View style={styles.container}>
         {todoData.map((item, index) => {
           return (
+            
             <View key={index} style={styles.user}>
               <Image
                 style={styles.image}

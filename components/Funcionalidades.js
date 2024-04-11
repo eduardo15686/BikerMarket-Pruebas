@@ -58,10 +58,10 @@ export default function funcionalidades(props) {
     });
     const filename = setHayFoto.substring(setHayFoto.lastIndexOf("/") + 1);
     const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-    await uploadBytes(storageRef, blob).then((snapshot) => { });
+    await uploadBytes(storageRef, blob).then((snapshot) => {});
     const url = await getDownloadURL(storageRef);
   };
-
+  
   const handleSingIn = () => {
     signInWithEmailAndPassword(auth, props.email, props.password)
       .then(() => {
@@ -197,7 +197,7 @@ export default function funcionalidades(props) {
           props.eventPhoto.lastIndexOf("/") + 1
         );
         const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-        await uploadBytes(storageRef, blob).then((snapshot) => { });
+        await uploadBytes(storageRef, blob).then((snapshot) => {});
         const url = await getDownloadURL(storageRef);
         await addDoc(collection(FIREBASE_DB, "events"), {
           eventPhoto: url,
@@ -248,7 +248,7 @@ export default function funcionalidades(props) {
           props.editPhoto.lastIndexOf("/") + 1
         );
         const storageRef = ref(storage, "foto-evento/" + `${filename}`);
-        await uploadBytes(storageRef, blob).then((snapshot) => { });
+        await uploadBytes(storageRef, blob).then((snapshot) => {});
         const urlEdit = await getDownloadURL(storageRef);
         await updateDoc(dataEdit, {
           eventPhoto: urlEdit,
