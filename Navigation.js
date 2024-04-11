@@ -27,6 +27,7 @@ import RallyAdmin from "./screens/tabScreens/RallyAdmin";
 import EditarEvento from "./EditarEvento";
 import Registrado from "./screens/draweGroup/Registrado";
 import { FIREBASE_DB } from "./credentials";
+import RegistroEvento from "./screens/usuario/RegistroEvento";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -79,13 +80,13 @@ function AdminGroup() {
         options={{}}
       />
       <Stack.Screen name="Editar evento" component={EditarEvento} />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Registro para Eventos"
         component={EventRegister}
         options={{
           presentation: "modal",
         }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 }
@@ -107,7 +108,6 @@ function StackGroup() {
     }
   };
   getDocument();
-
   return (
     <Stack.Navigator
       screenOptions={{ headerStyle: { backgroundColor: "#FAC3AE" } }}
@@ -160,6 +160,11 @@ function StackGroup() {
         name="Añadir Evento"
         component={AñadirEvento}
         options={{}}
+      />
+      <Stack.Screen
+        name="Registro Evento"
+        component={RegistroEvento}
+        options={{ presentation: "modal" }}
       />
 
       <Stack.Screen

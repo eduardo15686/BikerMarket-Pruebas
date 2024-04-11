@@ -2,9 +2,9 @@ import {
   StyleSheet,
   Text,
   View,
-  Pressable,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
@@ -60,30 +60,20 @@ export default function Rally() {
   const { navigate } = useNavigation();
   const navigation = useNavigation();
 
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerRight: () => (
-  //       <Pressable onPress={() => navigate("Añadir Evento")}>
-  //         <View style={{ alignContent: "center", alignItems: "center" }}>
-  //           <FontAwesome
-  //             style={{ marginRight: 1 }}
-  //             name="plus-circle"
-  //             size={24}
-  //             color="#f15a24"
-  //           />
-  //         </View>
-  //       </Pressable>
-  //     ),
-  //   });
-  // }, []);
-
   return (
     <ScrollView>
       <View style={styles.container}>
         {todoData.map((item, index) => {
           return (
-            
-            <View key={index} style={styles.user}>
+            <TouchableOpacity
+              key={index}
+              style={styles.user}
+              onPress={() =>
+                navigation.navigate("Registro Evento", {
+                  data: item,
+                })
+              }
+            >
               <Image
                 style={styles.image}
                 source={{ uri: item.datos.eventPhoto }}
@@ -99,7 +89,7 @@ export default function Rally() {
                   Fecha de inicio: {item.fecha}
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
           );
         })}
       </View>
