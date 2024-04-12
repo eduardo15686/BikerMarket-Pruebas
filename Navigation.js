@@ -28,7 +28,6 @@ import EditarEvento from "./EditarEvento";
 import Registrado from "./screens/draweGroup/Registrado";
 import { FIREBASE_DB } from "./credentials";
 import RegistroEvento from "./screens/usuario/RegistroEvento";
-
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 

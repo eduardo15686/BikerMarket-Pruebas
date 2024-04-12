@@ -229,8 +229,8 @@ export default function EditarEvento({ route }) {
                 setInfo({ ...info, vali: value })
               }
               items={[
-                { label: "SI", value: "sivali" },
-                { label: "NO", value: "novali" },
+                { label: "SI", value: "SI" },
+                { label: "NO", value: "NO" },
               ]}
             />
           </View>
@@ -254,8 +254,8 @@ export default function EditarEvento({ route }) {
                 setInfo({ ...info, certi: value })
               }
               items={[
-                { label: "SI", value: "sicerti" },
-                { label: "NO", value: "nocerti" },
+                { label: "SI", value: "SI" },
+                { label: "NO", value: "NO" },
               ]}
             />
           </View>
