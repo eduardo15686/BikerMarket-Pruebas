@@ -34,7 +34,8 @@ export default function Market() {
           inputStyle={{ backgroundColor: 'white' }}
           containerStyle={{
             backgroundColor: 'white',
-            aspectRatio: 9, borderWidth: 3, borderRadius: 150
+            aspectRatio: 9, borderWidth: 3, 
+            borderRadius: 150, borderColor: 'white'
           }}
           inputContainerStyle={{ backgroundColor: 'white' }}
           placeholderTextColor={'grey'}
