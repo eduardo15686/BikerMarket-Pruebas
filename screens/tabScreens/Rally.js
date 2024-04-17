@@ -52,6 +52,7 @@ export default function Rally() {
           });
         });
         setTodoData(arrayEmpty);
+        console.log(todoData);
       });
     };
     getEvent();

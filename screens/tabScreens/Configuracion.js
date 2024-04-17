@@ -1,35 +1,29 @@
-import { View, Text } from "react-native";
-import React, { useState } from "react";
-import RNPickerSelect from "react-native-picker-select";
-import { Picker } from "@react-native-picker/picker";
-
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { View, Text, Pressable } from "react-native";
+import React, { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function Configuracion() {
-  const [selectedLanguage, setSelectedLanguage] = useState();
-  const auth = getAuth();
-  const provider = new GoogleAuthProvider();
-
-  // signInWithPopup(auth, provider)
-  //   .then((result) => {
-  //     // This gives you a Google Access Token. You can use it to access the Google API.
-  //     const credential = GoogleAuthProvider.credentialFromResult(result);
-  //     const token = credential.accessToken;
-  //     // The signed-in user info.
-  //     const user = result.user;
-  //     // IdP data available using getAdditionalUserInfo(result)
-  //     // ...
-  //   })
-  //   .catch((error) => {
-  //     // Handle Errors here.
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     // The email of the user's account used.
-  //     const email = error.customData.email;
-  //     // The AuthCredential type that was used.
-  //     const credential = GoogleAuthProvider.credentialFromError(error);
-  //     // ...
-  //   });
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={() => navigate("Añadir Evento")}>
+          <View style={{ alignContent: "center", alignItems: "center" }}>
+            <FontAwesome
+              style={{ marginRight: 1 }}
+              name="plus-circle"
+              size={24}
+              color="#f15a24"
+            />
+          </View>
+        </Pressable>
+      ),
+      headerSearchBarOptions: {
+        placeholder: "buscar",
+      },
+    });
+  }, []);
   return (
     <View style={{ flex: 1, padding: 0, margin: 0 }}>
       <Text>Esto solo va en developer</Text>

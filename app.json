@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "navigation",
-    "slug": "navigation",
+    "name": "bikermarket",
+    "slug": "bikermarket",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,6 +11,16 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(BIKERMARKET) to access your camera",
+          "microphonePermission": "Allow $(BIKERMARKET) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ]
+    ],
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -21,10 +31,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.eduardo1586.bikermarket"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c6325ed1-7fdf-4a12-92d8-fc394cabbef5"
+      }
     }
   }
 }

@@ -27,7 +27,7 @@ import RallyAdmin from "./screens/tabScreens/RallyAdmin";
 import EditarEvento from "./EditarEvento";
 import Registrado from "./screens/draweGroup/Registrado";
 import { FIREBASE_DB } from "./credentials";
-import RegistroEvento from "./screens/usuario/RegistroEvento";
+import RegistroUserEvento from "./screens/usuario/RegistroUserEvento";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -90,6 +90,13 @@ function AdminGroup() {
   );
 }
 
+function StackMarket() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Market" component={Market} />
+    </Stack.Navigator>
+  );
+}
 //Usuario
 function StackGroup() {
   const [fotoPerfil, setFotoPerfil] = useState("");
@@ -112,9 +119,10 @@ function StackGroup() {
       screenOptions={{ headerStyle: { backgroundColor: "#FAC3AE" } }}
     >
       <Stack.Screen
-        name="Eventos"
+        name="Eventos User"
         component={TopTabGroup}
         options={{
+          headerTitle: "Eventos",
           headerRight: () => (
             <Pressable
               onPress={() =>
@@ -162,7 +170,7 @@ function StackGroup() {
       />
       <Stack.Screen
         name="Registro Evento"
-        component={RegistroEvento}
+        component={RegistroUserEvento}
         options={{ presentation: "modal" }}
       />
 
@@ -202,6 +210,39 @@ function TabGroup() {
           screenOptions={({ route }) => ({
             tabBarIcon: ({ color, focused, size }) => {
               let iconName;
+              if (route.name === "Eventos Admin") {
+                iconName = "motorcycle";
+              } else if (route.name === "Market 2") {
+                iconName = "shopping-cart";
+              } else if (route.name === "Bandeja") {
+                iconName = "folder-open";
+              } else if (route.name === "Configuración") {
+                iconName = "gear";
+              }
+              return <FontAwesome name={iconName} color={color} size={size} />;
+            },
+          })}
+        >
+          <Tab.Screen
+            name="Market 2"
+            component={StackMarket}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen
+            name="Eventos Admin"
+            component={AdminGroup}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen name="Bandeja" component={Bandeja} />
+          <Tab.Screen name="Configuración" component={Configuracion} />
+        </Tab.Navigator>
+      );
+    } else {
+      return (
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color, focused, size }) => {
+              let iconName;
               if (route.name === "Eventos") {
                 iconName = "motorcycle";
               } else if (route.name === "Market") {
@@ -218,35 +259,6 @@ function TabGroup() {
           <Tab.Screen name="Market" component={Market} />
           <Tab.Screen
             name="Eventos"
-            component={AdminGroup}
-            options={{ headerShown: false }}
-          />
-          <Tab.Screen name="Bandeja" component={Bandeja} />
-          <Tab.Screen name="Configuración" component={Configuracion} />
-        </Tab.Navigator>
-      );
-    } else {
-      return (
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ color, focused, size }) => {
-              let iconName;
-              if (route.name === "Eventos User") {
-                iconName = "motorcycle";
-              } else if (route.name === "Market") {
-                iconName = "shopping-cart";
-              } else if (route.name === "Bandeja") {
-                iconName = "folder-open";
-              } else if (route.name === "Configuración") {
-                iconName = "gear";
-              }
-              return <FontAwesome name={iconName} color={color} size={size} />;
-            },
-          })}
-        >
-          <Tab.Screen name="Market" component={Market} />
-          <Tab.Screen
-            name="Eventos User"
             component={StackGroup}
             options={{ headerShown: false }}
           />
