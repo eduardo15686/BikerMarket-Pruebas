@@ -17,22 +17,30 @@ import Funcionalidades from "././components/Funcionalidades";
 
 export default function EditarEvento({ route }) {
   const [info, setInfo] = useState({
-    setID: route.params.data.id,
-    image: route.params.data.datos.eventPhoto,
-    name: route.params.data.datos.eventName,
-    desc: route.params.data.datos.eventDesc,
-    vali: route.params.data.datos.validation,
-    certi: route.params.data.datos.certification,
+
+    updatedBy: route.params.data.id,
+    updateAt: new Date(),
+
+    deletedBy: route.params.data.id,
+    deletedAt: new Date(),
+
+    image: route.params.data.datos.url_photo,
+    nameEdit: route.params.data.datos.name,
+    descriptionEdit: route.params.data.datos.description,
+    validationEdit: route.params.data.datos.validation,
+    certificationEdit: route.params.data.datos.certification,
+    
+    
   });
 
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
   const [isPickerShowEnd, setIsPickerShowEnd] = useState(false); //useState para activar datePicker:  fecha fin
 
   const [date, setDate] = useState(
-    new Date(route.params.data.datos.dateInit.seconds * 1000)
+    new Date(route.params.data.datos.date_start.seconds * 1000)
   );
   const [endDate, setEndDate] = useState(
-    new Date(route.params.data.datos.dateEnd.seconds * 1000)
+    new Date(route.params.data.datos.date_end.seconds * 1000)
   );
 
   const pickImage = async () => {
@@ -101,10 +109,10 @@ export default function EditarEvento({ route }) {
               }}
             >
               <TextInput
-                onChangeText={(text) => setInfo({ ...info, name: text })}
+                onChangeText={(text) => setInfo({ ...info, nameEdit: text })}
                 style={styles.inputEventosDesc}
               >
-                {info.name}
+                {info.nameEdit}
               </TextInput>
             </View>
           </View>
@@ -122,12 +130,12 @@ export default function EditarEvento({ route }) {
               }}
             >
               <TextInput
-                onChangeText={(text) => setInfo({ ...info, desc: text })}
+                onChangeText={(text) => setInfo({ ...info, descriptionEdit: text })}
                 style={styles.inputEventosDesc}
                 maxLength={200}
                 multiline={true}
               >
-                {info.desc}
+                {info.descriptionEdit}
               </TextInput>
             </View>
           </View>
@@ -223,10 +231,10 @@ export default function EditarEvento({ route }) {
               Por favor seleccione "SI" o "NO"
             </Text>
             <RNPickerSelect
-              value={info.vali}
+              value={info.validationEdit}
               style={styles.dropDown}
               onValueChange={(value, index) =>
-                setInfo({ ...info, vali: value })
+                setInfo({ ...info, validationEdit: value })
               }
               items={[
                 { label: "SI", value: "SI" },
@@ -248,10 +256,10 @@ export default function EditarEvento({ route }) {
               Por favor seleccione "SI" o "NO"
             </Text>
             <RNPickerSelect
-              value={info.certi}
+              value={info.certificationEdit}
               style={styles.dropDown}
               onValueChange={(value, index) =>
-                setInfo({ ...info, certi: value })
+                setInfo({ ...info, certificationEdit: value })
               }
               items={[
                 { label: "SI", value: "SI" },
@@ -262,18 +270,21 @@ export default function EditarEvento({ route }) {
         </View>
         <Funcionalidades
           title={"Guardar"}
-          UID={info.setID}
+          updatedBy={info.updatedBy}
+          updateAt={info.updateAt}
+
           editPhoto={info.image}
-          editName={info.name}
-          editDesc={info.desc}
-          editInit={date}
+          editName={info.nameEdit}
+          editDescription={info.descriptionEdit}
+          editStart={date}
           editEnd={endDate}
-          editVali={info.vali}
-          editCerti={info.certi}
+          editValidation={info.validationEdit}
+          editCertification={info.certificationEdit}
           callFunction={"handlerEditEvent"}
         />
         <Funcionalidades
-          UID={info.setID}
+          deletedBy={info.deletedBy}
+          deletedAt={info.deletedAt}
           title={"Eliminar Evento"}
           callFunction={"handlerDeleteEvent"}
         />

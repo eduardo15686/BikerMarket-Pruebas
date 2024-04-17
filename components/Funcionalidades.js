@@ -43,7 +43,7 @@ export default function funcionalidades(props) {
   }, [setHayFoto]);
 
   const getUrl = async () => {
-    const { uri } = await FileSystem.getInfoAsync(setHayFoto);
+    const { uri } = await FileSystem.getInfoAsync(hayFoto);
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = () => {
@@ -56,7 +56,7 @@ export default function funcionalidades(props) {
       xhr.open("GET", uri, true);
       xhr.send(null);
     });
-    const filename = setHayFoto.substring(setHayFoto.lastIndexOf("/") + 1);
+    const filename = hayFoto.substring(hayFoto.lastIndexOf("/") + 1);
     const storageRef = ref(storage, "foto-evento/" + `${filename}`);
     await uploadBytes(storageRef, blob).then((snapshot) => {});
     const url = await getDownloadURL(storageRef);
@@ -155,9 +155,9 @@ export default function funcionalidades(props) {
   ///Registrar evento
   async function handleRegisterEvent() {
     const storage = getStorage(FIREBASE_APP);
-    if (props.eventName == "" || props.eventDesc == "") {
+    if (props.eventName === undefined || props.eventDescription === undefined) {
       Alert.alert("Error", "Por favor, llene todos los cambios");
-      console.log(props.eventDesc);
+      console.log(props.eventDescription);
       return;
     }
     if (props.validation === undefined || props.certification === undefined) {
@@ -167,11 +167,11 @@ export default function funcionalidades(props) {
     try {
       if (!props.eventPhoto) {
         await addDoc(collection(FIREBASE_DB, "events"), {
-          event_photo: hayFoto,
+          url_photo: hayFoto,
           status: "Activo",
           created_by: props.userID,
-          event_name: props.eventName,
-          event_description: props.eventDescription,
+          name: props.eventName,
+          description: props.eventDescription,
           date_start: props.dateStart,
           date_end: props.dateEnd,
           created_at: props.createdAt,
@@ -200,7 +200,7 @@ export default function funcionalidades(props) {
         await uploadBytes(storageRef, blob).then((snapshot) => {});
         const url = await getDownloadURL(storageRef);
         await addDoc(collection(FIREBASE_DB, "events"), {
-          event_photo: url,
+          url_photo: url,
           status: "Activo",
           created_by: props.userID,
           event_name: props.eventName,
@@ -212,7 +212,6 @@ export default function funcionalidades(props) {
           certification: props.certification,
         });
         Alert.alert("¡Evento registrado!");
-        console.log("Props: ", props.userID, props.createdAt);
       }
     } catch (error) {
       console.log(error);
@@ -227,10 +226,10 @@ export default function funcionalidades(props) {
       return;
     }
     try {
-      const dataEdit = doc(FIREBASE_DB, "events", props.UID);
+      const dataEdit = doc(FIREBASE_DB, "events", props.updatedBy);
       const imagenURL = getDoc(dataEdit);
 
-      const pruebas = (await imagenURL).data().eventPhoto;
+      const pruebas = (await imagenURL).data().url_photo;
 
       if (pruebas != props.editPhoto) {
         const { uri } = await FileSystem.getInfoAsync(props.editPhoto);
@@ -253,28 +252,34 @@ export default function funcionalidades(props) {
         await uploadBytes(storageRef, blob).then((snapshot) => {});
         const urlEdit = await getDownloadURL(storageRef);
         await updateDoc(dataEdit, {
-          eventPhoto: urlEdit,
-          eventName: props.editName,
-          eventDesc: props.editDesc,
-          dateInit: props.editInit,
-          dateEnd: props.editEnd,
-          validation: props.editVali,
-          certification: props.editCerti,
+          url_photo: urlEdit,
+          updated_by: props.updatedBy,
+          updated_at: props.updateAt,
+          name: props.editName,
+          description: props.editDescription,
+          date_start: props.editStart,
+          date_end: props.editEnd,
+          validation: props.editValidation,
+          certification: props.editCertification,
         });
         Alert.alert("Evento editado!");
+        console.log("props: ", props);
       } else {
         await updateDoc(dataEdit, {
-          eventName: props.editName,
-          eventDesc: props.editDesc,
-          dateInit: props.editInit,
-          dateEnd: props.editEnd,
-          validation: props.editVali,
-          certification: props.editCerti,
+          updated_by: props.updatedBy,
+          updated_at: props.updateAt,
+          event_name: props.editName,
+          event_description: props.editDescription,
+          date_start: props.editStart,
+          date_end: props.editEnd,
+          validation: props.editValidation,
+          certification: props.editCertification,
         });
         Alert.alert("¡Evento editado!");
+        console.log("props: ", props);
       }
     } catch (error) {
-      console.log("Desde editar", error);
+      console.log("Desde editar", error, props);
     }
   }
 

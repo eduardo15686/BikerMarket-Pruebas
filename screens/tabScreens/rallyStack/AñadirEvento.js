@@ -31,8 +31,8 @@ const storage = getStorage(FIREBASE_APP);
 export default function AñadirEvento(props) {
   const [userData, setUserData] = useState([
     {
-      nameEvent: "",
-      descEvent: "",
+      eventName: "",
+      eventDescription: "",
       vali: "empty",
       certi: "empty",
     },
@@ -46,7 +46,6 @@ export default function AñadirEvento(props) {
 
   const [fotoEvento, setFotoEvento] = useState(null);
 
-  //const [descEvent, setDescEvent] = useState("");
   const [userID, setUserID] = useState(auth.currentUser.uid);
 
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
@@ -150,7 +149,7 @@ export default function AñadirEvento(props) {
               }}
             >
               <TextInput
-                onChangeText={(text) => setUserData({ ...userData, descEvent: text})}
+                onChangeText={(text) => setUserData({ ...userData, eventDescription: text})}
                 style={styles.inputEventosDesc}
                 maxLength={200}
                 multiline={true}
@@ -307,10 +306,10 @@ export default function AñadirEvento(props) {
 
         <Funcionalidades
           title={"Registrar evento"}
-          eventPhoto={fotoEvento}
+          editPhoto={fotoEvento}
           userID={userID}
           eventName={userData.eventName}
-          eventDescription={userData.descEvent}
+          eventDescription={userData.eventDescription}
           dateStart={dates.dateStart}
           dateEnd={dates.endDate}
           createdAt={dates.createdAt}

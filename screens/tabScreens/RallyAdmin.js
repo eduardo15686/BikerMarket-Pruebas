@@ -24,7 +24,7 @@ export default function RallyAdmin() {
       const q = query(
         collection(FIREBASE_DB, "events"),
         where("status", "==", "Activo"),
-        where("userID", "==", auth.currentUser.uid)
+        where("created_by", "==", auth.currentUser.uid)
       );
       console.log(auth.currentUser.uid);
       onSnapshot(q, (querySnapshot) => {
@@ -34,7 +34,7 @@ export default function RallyAdmin() {
             id: doc.id,
             datos: doc.data(),
             fecha: new Date(
-              doc.data().dateInit.seconds * 1000
+              doc.data().date_start.seconds * 1000
             ).toLocaleDateString("es-Mx", {
               weekday: "long",
               day: "numeric",
@@ -42,6 +42,7 @@ export default function RallyAdmin() {
               year: "numeric",
             }),
           });
+
         });
         setTodoData(arrayEmpty);
       });
@@ -73,6 +74,7 @@ export default function RallyAdmin() {
 
   return (
     <ScrollView>
+      
       <View style={styles.container}>
         {todoData.map((item, index) => {
           return (
@@ -87,14 +89,14 @@ export default function RallyAdmin() {
             >
               <Image
                 style={styles.image}
-                source={{ uri: item.datos.eventPhoto }}
+                source={{ uri: item.datos.url_photo }}
               />
 
               <View style={styles.userInfo}>
-                <Text style={styles.title}>{item.datos.eventName}</Text>
+                <Text style={styles.title}>{item.datos.name}</Text>
                 <Text style={styles.subTitle}>Descripcion:</Text>
                 <Text style={styles.userText}>
-                  {item.datos.eventDesc.substring(0, 30)} ...
+                  {item.datos.description.substring(0, 30)} ...
                 </Text>
                 <Text style={styles.subTitle}>
                   Fecha de inicio: {item.datos.fecha}
