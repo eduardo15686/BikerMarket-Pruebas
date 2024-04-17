@@ -166,15 +166,15 @@ export default function funcionalidades(props) {
     }
     try {
       if (!props.eventPhoto) {
-        console.log("no hay foto: ", props.eventDesc);
         await addDoc(collection(FIREBASE_DB, "events"), {
-          eventPhoto: hayFoto,
+          event_photo: hayFoto,
           status: "Activo",
-          userID: props.UID,
-          eventName: props.eventName,
-          eventDesc: props.eventDesc,
-          dateInit: props.dateInit,
-          dateEnd: props.dateEnd,
+          created_by: props.userID,
+          event_name: props.eventName,
+          event_description: props.eventDescription,
+          date_start: props.dateStart,
+          date_end: props.dateEnd,
+          created_at: props.createdAt,
           validation: props.validation,
           certification: props.certification,
         });
@@ -200,17 +200,19 @@ export default function funcionalidades(props) {
         await uploadBytes(storageRef, blob).then((snapshot) => {});
         const url = await getDownloadURL(storageRef);
         await addDoc(collection(FIREBASE_DB, "events"), {
-          eventPhoto: url,
+          event_photo: url,
           status: "Activo",
-          userID: props.UID,
-          eventName: props.eventName,
-          eventDesc: props.eventDesc,
-          dateInit: props.dateInit,
-          dateEnd: props.dateEnd,
+          created_by: props.userID,
+          event_name: props.eventName,
+          event_description: props.eventDescription,
+          date_start: props.dateStart,
+          date_end: props.dateEnd,
+          created_at: props.createdAt,
           validation: props.validation,
           certification: props.certification,
         });
         Alert.alert("¡Evento registrado!");
+        console.log("Props: ", props.userID, props.createdAt);
       }
     } catch (error) {
       console.log(error);
