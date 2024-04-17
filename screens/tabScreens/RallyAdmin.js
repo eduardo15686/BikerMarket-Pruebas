@@ -53,7 +53,7 @@ export default function RallyAdmin() {
   const { navigate } = useNavigation();
   const navigation = useNavigation();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable onPress={() => navigate("Añadir Evento")}>
