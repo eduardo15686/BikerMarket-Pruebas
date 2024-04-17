@@ -32,19 +32,21 @@ export default function AñadirEvento(props) {
   const [userData, setUserData] = useState([
     {
       nameEvent: "",
+      descEvent: "",
       vali: "empty",
       certi: "empty",
     },
   ]);
 
   const [dates, setDates] = useState({
-    date: new Date(),
+    dateStart: new Date(),
     endDate: new Date(),
+    createdAt: new Date()
   });
 
   const [fotoEvento, setFotoEvento] = useState(null);
 
-  const [descEvent, setDescEvent] = useState("");
+  //const [descEvent, setDescEvent] = useState("");
   const [userID, setUserID] = useState(auth.currentUser.uid);
 
   const [isPickerShow, setIsPickerShow] = useState(false); //useState para activar datePicker:  fecha inicio
@@ -82,7 +84,7 @@ export default function AñadirEvento(props) {
 
 
   const handleConfirm = (date) => {
-    setDates({ ...dates, date: date });
+    setDates({ ...dates, dateStart: date });
     hideDatePicker();
   };
 
@@ -148,7 +150,7 @@ export default function AñadirEvento(props) {
               }}
             >
               <TextInput
-                onChangeText={(text) => setDescEvent(text)}
+                onChangeText={(text) => setUserData({ ...userData, descEvent: text})}
                 style={styles.inputEventosDesc}
                 maxLength={200}
                 multiline={true}
@@ -166,7 +168,7 @@ export default function AñadirEvento(props) {
             >
               <Text style={{ fontWeight: "bold" }}>Fecha de inicio: </Text>
               <Text>
-                {dates.date.toLocaleDateString("es-Mx", {
+                {dates.dateStart.toLocaleDateString("es-Mx", {
                   weekday: "long",
                   day: "numeric",
                   month: "long",
@@ -306,11 +308,12 @@ export default function AñadirEvento(props) {
         <Funcionalidades
           title={"Registrar evento"}
           eventPhoto={fotoEvento}
-          UID={userID}
+          userID={userID}
           eventName={userData.eventName}
-          eventDesc={descEvent}
-          dateInit={dates.date}
+          eventDescription={userData.descEvent}
+          dateStart={dates.dateStart}
           dateEnd={dates.endDate}
+          createdAt={dates.createdAt}
           validation={userData.vali}
           certification={userData.certi}
           callFunction={"handleRegisterEvent"}
